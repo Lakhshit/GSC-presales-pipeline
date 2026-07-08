@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GSC Pre-sales Pipeline — Command Centre</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+/* ── RESET & TOKENS ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:     #0c0c0b;
+  --bg1:    #141412;
+  --bg2:    #1a1a18;
+  --bg3:    #222220;
+  --bdr:    #272725;
+  --bdr2:   #303030;
+  --txt:    #e2dfd8;
+  --txt2:   #8a8780;
+  --txt3:   #555552;
+  --acc:    #7f77dd;
+  --acc2:   #a09ae0;
+  --grn:    #5dcaa5;
+  --grn2:   #0a3020;
+  --amb:    #f5a623;
+  --red:    #f07070;
+  --blu:    #4a9eed;
+  --r: 11px;
+  --shadow: 0 2px 12px rgba(0,0,0,.4);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--bg); color: var(--txt); min-height: 100vh; }
+
+/* ── SHELL ───────────────────────────────────────────────── */
+.shell { display: flex; height: 100vh; overflow: hidden; }
+
+/* ── SIDEBAR ─────────────────────────────────────────────── */
+.sidebar {
+  width: 220px; flex-shrink: 0;
+  background: var(--bg1);
+  border-right: 1px solid var(--bdr);
+  display: flex; flex-direction: column;
+  overflow-y: auto; overflow-x: hidden;
+  transition: width .2s;
+}
+.sidebar.collapsed { width: 56px; }
+.sb-logo { padding: 18px 16px 12px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--bdr); }
+.sb-logo-mark { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg,#7f77dd,#5dcaa5); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #fff; font-weight: 700; }
+.sb-logo-txt { font-size: 13px; font-weight: 600; color: var(--txt); white-space: nowrap; overflow: hidden; }
+.sb-logo-sub { font-size: 9px; color: var(--txt3); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
+.sb-section { padding: 8px 8px 4px; font-size: 9px; color: var(--txt3); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; overflow: hidden; margin-top: 6px; }
+.sidebar.collapsed .sb-section { opacity: 0; }
+.sb-link { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; cursor: pointer; color: var(--txt2); font-size: 12px; font-weight: 500; transition: all .15s; margin: 1px 6px; border: none; background: none; width: calc(100% - 12px); text-align: left; white-space: nowrap; overflow: hidden; }
+.sb-link:hover { background: var(--bg2); color: var(--txt); }
+.sb-link.active { background: linear-gradient(135deg,#1c1a2e,#0d1e30); color: var(--txt); }
+.sb-link.active .sb-icon { color: var(--acc); }
+.sb-icon { font-size: 16px; flex-shrink: 0; }
+.sb-badge { margin-left: auto; font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 10px; background: var(--acc); color: #fff; }
+.sb-steps { padding: 6px 8px; flex: 1; }
+.sidebar.collapsed .sb-link span, .sidebar.collapsed .sb-badge { display: none; }
+.sb-bottom { border-top: 1px solid var(--bdr); padding: 10px 8px; }
+
+/* ── MAIN AREA ───────────────────────────────────────────── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar {
+  height: 52px; flex-shrink: 0;
+  border-bottom: 1px solid var(--bdr);
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 20px;
+  background: var(--bg1);
+}
+.topbar-title { font-size: 14px; font-weight: 600; flex: 1; }
+.topbar-sub { font-size: 11px; color: var(--txt2); }
+.topbar-actions { display: flex; align-items: center; gap: 6px; }
+.tba { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border: 1px solid var(--bdr2); border-radius: 8px; font-size: 11px; font-weight: 500; cursor: pointer; background: var(--bg2); color: var(--txt2); transition: all .15s; }
+.tba:hover { background: var(--bg3); color: var(--txt); }
+.tba.primary { background: var(--acc); border-color: var(--acc); color: #fff; }
+.tba.primary:hover { filter: brightness(1.1); }
+.tba.success { background: var(--grn2); border-color: var(--grn); color: var(--grn); }
+.collapse-btn { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--bdr); background: var(--bg2); cursor: pointer; color: var(--txt2); display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.content { flex: 1; overflow-y: auto; padding: 20px 24px 40px; }
+
+/* ── PAGES ───────────────────────────────────────────────── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── DASHBOARD KPI CARDS ─────────────────────────────────── */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.kpi { background: var(--bg2); border: 1px solid var(--bdr); border-radius: var(--r); padding: 16px; position: relative; overflow: hidden; }
+.kpi::before { content: ''; position: absolute; inset: 0 0 0 0; opacity: .05; }
+.kpi.kpi-acc::before { background: var(--acc); }
+.kpi.kpi-grn::before { background: var(--grn); }
+.kpi.kpi-amb::before { background: var(--amb); }
+.kpi.kpi-red::before { background: var(--red); }
+.kpi-label { font-size: 10px; color: var(--txt3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+.kpi-val { font-size: 26px; font-weight: 300; letter-spacing: -.02em; }
+.kpi-sub { font-size: 10px; color: var(--txt2); margin-top: 4px; }
+.kpi-icon { position: absolute; right: 14px; top: 14px; font-size: 18px; opacity: .25; }
+.kpi-delta { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; padding: 1px 6px; border-radius: 10px; margin-top: 6px; }
+.kpi-delta.up { background: #0a3020; color: var(--grn); }
+.kpi-delta.dn { background: #2a0f0f; color: var(--red); }
+
+/* ── PANEL ───────────────────────────────────────────────── */
+.panel { background: var(--bg2); border: 1px solid var(--bdr); border-radius: var(--r); padding: 18px 20px; margin-bottom: 14px; }
+.panel-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.panel-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+.panel-title i { color: var(--acc); }
+.panel-desc { font-size: 11px; color: var(--txt2); margin-bottom: 14px; line-height: 1.5; }
+
+/* ── STEP FLOW ───────────────────────────────────────────── */
+.stepflow { display: flex; align-items: center; gap: 0; margin-bottom: 22px; overflow-x: auto; padding-bottom: 2px; }
+.sf { display: flex; align-items: center; }
+.sfn { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--bdr2); color: var(--txt3); cursor: pointer; flex-shrink: 0; transition: all .2s; }
+.sfn.done { background: var(--grn2); border-color: var(--grn); color: var(--grn); }
+.sfn.cur  { background: linear-gradient(135deg,#7f77dd,#5557cc); border-color: var(--acc); color: #fff; box-shadow: 0 0 12px rgba(127,119,221,.4); }
+.sf-lbl { font-size: 10px; color: var(--txt2); margin-left: 6px; margin-right: 4px; white-space: nowrap; cursor: pointer; }
+.sf-lbl.cur { color: var(--txt); font-weight: 500; }
+.sf-arr { font-size: 12px; color: var(--txt3); margin: 0 6px; }
+
+/* ── FORM ELEMENTS ───────────────────────────────────────── */
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg label { font-size: 10px; font-weight: 600; color: var(--txt3); text-transform: uppercase; letter-spacing: .06em; }
+input[type=text], select, textarea {
+  font-family: var(--font); font-size: 13px; color: var(--txt);
+  background: var(--bg1); border: 1px solid var(--bdr2); border-radius: 8px;
+  padding: 9px 12px; outline: none; width: 100%;
+  transition: border-color .15s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--acc); }
+select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+select option { background: var(--bg2); }
+textarea { resize: vertical; min-height: 72px; }
+.hint { font-size: 10px; color: var(--txt3); margin-top: 3px; }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.full { grid-column: 1 / -1; }
+
+/* ── BUTTONS ─────────────────────────────────────────────── */
+.navrow { display: flex; gap: 8px; margin-top: 18px; }
+.btn { flex: 1; max-width: 200px; padding: 11px 16px; font-size: 13px; font-weight: 500; border: 1px solid var(--bdr2); border-radius: 9px; background: var(--bg2); color: var(--txt2); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all .15s; }
+.btn:hover { background: var(--bg3); color: var(--txt); }
+.btn.pri { background: var(--acc); border-color: var(--acc); color: #fff; flex: 2; max-width: 300px; }
+.btn.pri:hover { filter: brightness(1.1); }
+.btn.grn { background: var(--grn2); border-color: var(--grn); color: var(--grn); flex: 2; max-width: 300px; }
+.btn.grn:hover { filter: brightness(1.2); }
+.btn:disabled, .btn[data-disabled] { opacity: .4; pointer-events: none; }
+.addbtn { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--acc); background: #1c1a2a; border: 1px solid #3a3070; border-radius: 7px; padding: 5px 12px; cursor: pointer; margin-top: 8px; transition: all .15s; }
+.addbtn:hover { filter: brightness(1.2); }
+.rmbtn { background: none; border: 1px solid var(--bdr); border-radius: 6px; padding: 3px 7px; cursor: pointer; color: var(--txt3); font-size: 11px; transition: all .15s; }
+.rmbtn:hover { color: var(--red); border-color: var(--red); }
+
+/* ── UPLOAD ZONE ─────────────────────────────────────────── */
+.uz { border: 2px dashed var(--bdr2); border-radius: var(--r); padding: 36px 20px; text-align: center; background: var(--bg1); cursor: pointer; transition: all .2s; margin-bottom: 10px; }
+.uz:hover, .uz.drag { border-color: var(--acc); background: rgba(127,119,221,.05); }
+.uz-icon { font-size: 32px; color: var(--txt3); margin-bottom: 10px; }
+.uz-title { font-size: 14px; color: var(--txt2); margin-bottom: 4px; }
+.uz-sub { font-size: 11px; color: var(--txt3); }
+.flist { display: flex; flex-direction: column; gap: 6px; }
+.fi { display: flex; align-items: center; gap: 10px; background: var(--bg3); border: 1px solid var(--bdr); border-radius: 8px; padding: 8px 12px; font-size: 12px; }
+.fn { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--txt); }
+.fs { color: var(--txt3); flex-shrink: 0; }
+.fi button { background: none; border: none; cursor: pointer; color: var(--txt3); font-size: 16px; padding: 0; }
+.fi button:hover { color: var(--red); }
+
+/* ── RANGES ──────────────────────────────────────────────── */
+.rrow { display: flex; align-items: center; gap: 10px; }
+.rrow input[type=range] { flex: 1; accent-color: var(--acc); }
+.rv { font-size: 13px; font-weight: 600; color: var(--acc); min-width: 44px; text-align: right; }
+
+/* ── TABLE ───────────────────────────────────────────────── */
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tbl th { text-align: left; font-size: 9px; color: var(--txt3); text-transform: uppercase; letter-spacing: .06em; padding: 8px 10px; border-bottom: 1px solid var(--bdr); background: var(--bg1); }
+.tbl td { padding: 7px 8px; border-bottom: 1px solid var(--bdr); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl input, .tbl select, .tbl textarea { font-size: 12px; padding: 5px 8px; background: var(--bg2); border: 1px solid var(--bdr); border-radius: 6px; font-family: var(--font); color: var(--txt); outline: none; width: 100%; }
+.tbl textarea { min-height: 44px; resize: vertical; }
+.tbl tr:hover td { background: rgba(255,255,255,.01); }
+
+/* ── TAGS ────────────────────────────────────────────────── */
+.tags { display: flex; flex-wrap: wrap; gap: 5px; background: var(--bg1); border: 1px solid var(--bdr2); border-radius: 8px; padding: 6px 8px; min-height: 44px; cursor: text; }
+.tags:focus-within { border-color: var(--acc); }
+.tags input { border: none; background: transparent; outline: none; font-size: 12px; color: var(--txt); flex: 1; min-width: 120px; padding: 2px 4px; font-family: var(--font); }
+.tag { display: inline-flex; align-items: center; gap: 4px; background: #1e1c40; color: var(--acc2); border: 1px solid #3a3070; border-radius: 6px; padding: 2px 8px; font-size: 11px; }
+.tag button { background: none; border: none; cursor: pointer; color: inherit; opacity: .6; font-size: 14px; padding: 0; line-height: 1; }
+
+/* ── STATUS BADGES ───────────────────────────────────────── */
+.badge { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+.badge-extracted { background: #0d2540; color: var(--blu); border: 1px solid #1a3a5c; }
+.badge-confirmed { background: var(--grn2); color: var(--grn); border: 1px solid #1a4a30; }
+.badge-assumed   { background: #2a1a00; color: var(--amb); border: 1px solid #4a3000; }
+.badge-missing   { background: #2a0f0f; color: var(--red); border: 1px solid #5a1a1a; }
+.badge-acc       { background: #1a1540; color: var(--acc2); border: 1px solid #2a2060; }
+
+/* ── AI BOX ──────────────────────────────────────────────── */
+.aibox { background: linear-gradient(135deg, #1a1540, #0d2540); border: 1px solid #3a3080; border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px; }
+.aibox-hdr { font-size: 11px; color: var(--acc2); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.aibox p { font-size: 12px; color: #aaa; line-height: 1.7; }
+
+/* ── LOADING ─────────────────────────────────────────────── */
+.lbox { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 48px 20px; text-align: center; }
+.spin { width: 36px; height: 36px; border: 2px solid var(--bdr2); border-top-color: var(--acc); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation: pulseDot 1.4s ease-in-out infinite; }
+@keyframes pulseDot { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1.2)} }
+
+/* ── PIPELINE VIEW ───────────────────────────────────────── */
+.pipe-tabs { display: flex; background: var(--bg2); border: 1px solid var(--bdr); border-radius: 10px; padding: 3px; margin-bottom: 16px; gap: 2px; overflow-x: auto; }
+.pt { flex: 1; min-width: 80px; padding: 8px 6px; border-radius: 8px; font-size: 11px; font-weight: 500; color: var(--txt3); cursor: pointer; text-align: center; border: none; background: none; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+.pt.on { background: var(--bg3); color: var(--txt); }
+.pt.on i { color: var(--acc); }
+
+/* ── PROGRESS ─────────────────────────────────────────────── */
+.prog-wrap { background: var(--bg1); border-radius: 4px; height: 6px; overflow: hidden; margin: 6px 0; }
+.prog-bar  { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--acc), var(--grn)); transition: width .6s ease; }
+
+/* ── PIPELINE NODES ──────────────────────────────────────── */
+.prow { display: flex; align-items: stretch; gap: 0; flex-wrap: nowrap; }
+.pn { flex: 1; min-width: 0; border: 1px solid var(--bdr); border-radius: 10px; padding: 10px; background: var(--bg2); }
+.pn-b { background: #0d2540; border-color: #1a3a5c; }
+.pn-g { background: #0a2a20; border-color: #1a4a30; }
+.pn-p { background: #1a1540; border-color: #2a2060; }
+.pn-a { background: #2a1a00; border-color: #4a3000; }
+.pn-t { background: #062218; border-color: #1a4a30; }
+.pn-o { background: #1a0f00; border-color: #4a2800; }
+.pn-x { background: var(--bg2); border-color: var(--bdr); }
+.pnt { font-size: 11px; font-weight: 600; color: var(--txt); margin-bottom: 3px; }
+.pns { font-size: 9px; color: var(--txt3); margin-bottom: 5px; }
+.pn ul { list-style: none; }
+.pn ul li { font-size: 10px; color: var(--txt2); padding: 1px 0; display: flex; gap: 4px; word-break: break-word; }
+.pn ul li::before { content: '·'; color: var(--txt3); flex-shrink: 0; }
+.pnbadge { font-size: 9px; padding: 1px 5px; border-radius: 10px; display: inline-block; margin-bottom: 4px; }
+.pb-ai  { background: #1a1540; color: var(--acc2); border: 1px solid #2a2060; }
+.pb-sme { background: #2a1a00; color: var(--amb); border: 1px solid #4a3000; }
+.arr { display: flex; align-items: center; justify-content: center; padding: 0 4px; flex-shrink: 0; opacity: .3; }
+.plus { display: flex; align-items: center; padding: 0 4px; flex-shrink: 0; color: var(--txt3); font-size: 16px; }
+
+/* ── CALLOUT ─────────────────────────────────────────────── */
+.callout { border-left: 3px solid var(--acc); border-radius: 0 8px 8px 0; padding: 10px 14px; margin-top: 12px; font-size: 11px; color: var(--txt2); background: rgba(127,119,221,.07); line-height: 1.6; display: flex; align-items: flex-start; gap: 8px; }
+.callout.amber { border-color: var(--amb); background: rgba(245,166,35,.07); color: var(--txt2); }
+.callout.green  { border-color: var(--grn); background: rgba(93,202,165,.07); }
+.callout i { flex-shrink: 0; }
+
+/* ── PHASES ──────────────────────────────────────────────── */
+.phases { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.pp { flex: 1; min-width: 72px; border: 1px solid var(--bdr); border-radius: 9px; padding: 10px 6px; text-align: center; cursor: pointer; background: var(--bg2); color: var(--txt3); transition: all .15s; }
+.pp:hover { background: var(--bg3); }
+.pp.on { border-width: 1.5px; border-radius: 9px; font-weight: 500; }
+.pp.on.pp1 { background: #0d2540; border-color: var(--blu); color: var(--blu); }
+.pp.on.pp2 { background: #0a2a20; border-color: var(--grn); color: var(--grn); }
+.pp.on.pp3 { background: #1a1540; border-color: var(--acc); color: var(--acc); }
+.pp.on.pp4 { background: #2a1a00; border-color: var(--amb); color: var(--amb); }
+.pp.on.pp5 { background: #1a0f00; border-color: #d97a10; color: #d97a10; }
+.pp.on.pp6 { background: #062218; border-color: #3acf9e; color: #3acf9e; }
+.ppi { font-size: 18px; display: block; margin-bottom: 4px; }
+.ppl { font-size: 9px; font-weight: 500; color: inherit; display: block; }
+
+/* ── WALKTHROUGH ─────────────────────────────────────────── */
+.wt-tabs { display: flex; gap: 3px; margin-bottom: 14px; overflow-x: auto; }
+.wt-tab { flex: 1; min-width: 60px; padding: 6px 4px; border-radius: 7px; font-size: 10px; color: var(--txt3); text-align: center; cursor: pointer; border: 1px solid transparent; background: none; white-space: nowrap; transition: all .15s; }
+.wt-tab.on { background: var(--bg3); border-color: var(--bdr2); color: var(--txt); font-weight: 500; }
+.wt-tab.dn { color: var(--grn); }
+.wt-card { background: var(--bg1); border: 1px solid var(--bdr); border-radius: 9px; padding: 16px; min-height: 120px; }
+.wt-ctitle { font-size: 13px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.wt-body  { font-size: 12px; color: var(--txt2); line-height: 1.75; }
+.wt-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+.wt-ctr { font-size: 10px; color: var(--txt3); }
+.wt-dots { display: flex; gap: 4px; }
+.wt-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--bdr2); transition: background .2s; }
+.wt-dot.on { background: var(--acc); }
+.wt-btns { display: flex; gap: 6px; }
+.wt-btn { font-size: 11px; padding: 6px 13px; border: 1px solid var(--bdr2); border-radius: 7px; background: var(--bg2); color: var(--txt); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all .15s; }
+.wt-btn:hover { background: var(--bg3); }
+.wt-btn.pp { background: #1a1540; border-color: #3a3080; color: var(--acc2); }
+
+/* ── SUMMARY BAR ─────────────────────────────────────────── */
+.sumbar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.sc { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 5px 11px; border-radius: 20px; background: var(--bg2); border: 1px solid var(--bdr); color: var(--txt2); }
+.sc strong { color: var(--txt); }
+
+/* ── TAKEAWAY ────────────────────────────────────────────── */
+.takeaway { border-left: 3px solid var(--amb); border-radius: 0 8px 8px 0; padding: 12px 16px; margin-top: 16px; font-size: 12px; color: var(--txt2); background: rgba(245,166,35,.05); line-height: 1.7; }
+.takeaway strong { color: var(--txt); }
+
+/* ── WIN/LOSS TRACKER ────────────────────────────────────── */
+.wl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.wl-card { border: 1px solid var(--bdr); border-radius: var(--r); padding: 16px; background: var(--bg2); }
+.wl-card.win-card { border-color: #1a4a30; background: var(--grn2); }
+.wl-card.loss-card { border-color: #5a1a1a; background: #1e0f0f; }
+.wl-big { font-size: 40px; font-weight: 200; }
+.wl-lbl { font-size: 11px; color: var(--txt2); margin-top: 2px; }
+.deal-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--bdr); }
+.deal-row:last-child { border-bottom: none; }
+.deal-name { flex: 1; font-size: 12px; font-weight: 500; }
+.deal-meta { font-size: 10px; color: var(--txt2); }
+.deal-stage { font-size: 10px; padding: 2px 8px; border-radius: 10px; }
+.ds-lead    { background: #0d2540; color: var(--blu); border: 1px solid #1a3a5c; }
+.ds-prop    { background: #1a1540; color: var(--acc); border: 1px solid #2a2060; }
+.ds-nego    { background: #2a1a00; color: var(--amb); border: 1px solid #4a3000; }
+.ds-won     { background: var(--grn2); color: var(--grn); border: 1px solid #1a4a30; }
+.ds-lost    { background: #2a0f0f; color: var(--red); border: 1px solid #5a1a1a; }
+
+/* ── RISK MATRIX ─────────────────────────────────────────── */
+.risk-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--bdr); background: var(--bg1); }
+.risk-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.risk-h { background: #2a0f0f; color: var(--red); }
+.risk-m { background: #2a1a00; color: var(--amb); }
+.risk-l { background: #0a2a20; color: var(--grn); }
+.risk-body { flex: 1; }
+.risk-title { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+.risk-desc  { font-size: 11px; color: var(--txt2); line-height: 1.5; }
+
+/* ── NOTIFY ──────────────────────────────────────────────── */
+#notif-area { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.notif { background: var(--bg2); border: 1px solid var(--bdr2); border-radius: 10px; padding: 10px 14px; font-size: 12px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 8px; max-width: 280px; animation: slideIn .25s ease; pointer-events: auto; }
+.notif.ok  { border-color: var(--grn); }
+.notif.err { border-color: var(--red); }
+.notif i { font-size: 14px; }
+.notif.ok  i { color: var(--grn); }
+.notif.err i { color: var(--red); }
+@keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+
+/* ── DDPBO GRID ──────────────────────────────────────────── */
+.dgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
+.dc { border: 1px solid var(--bdr); border-radius: 10px; padding: 12px 8px; text-align: center; background: var(--bg2); transition: all .2s; }
+.dc.on { border-width: 1.5px; }
+.dc.on.dc1 { background: #0d2540; border-color: var(--blu); }
+.dc.on.dc2 { background: #0a2a20; border-color: var(--grn); }
+.dc.on.dc3 { background: #1a1540; border-color: var(--acc); }
+.dc.on.dc4 { background: #2a1a00; border-color: var(--amb); }
+.dc.on.dc5 { background: #1a0f00; border-color: #d97a10; }
+.dc.on.dc6 { background: #062218; border-color: #3acf9e; }
+.dclbl { font-size: 9px; color: var(--txt3); padding: 1px 6px; border-radius: 10px; background: var(--bg3); display: inline-block; margin-bottom: 6px; }
+.dcicon { font-size: 18px; margin-bottom: 5px; }
+.dctitle { font-size: 11px; font-weight: 600; color: var(--txt); margin-bottom: 3px; }
+.dcsub { font-size: 10px; color: var(--txt2); line-height: 1.4; }
+.dcon { font-size: 9px; padding: 1px 6px; border-radius: 10px; background: #1a1540; color: var(--acc); border: 1px solid #2a2060; display: inline-block; margin-top: 5px; }
+
+/* ── DOMAIN MULTI ────────────────────────────────────────── */
+.drows { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
+.drow { display: flex; align-items: center; gap: 5px; }
+.dtag { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 6px; min-width: 70px; text-align: center; flex-shrink: 0; }
+.mpill { flex: 1; border: 1px solid var(--bdr); border-radius: 6px; padding: 3px 7px; font-size: 10px; color: var(--txt2); background: var(--bg2); display: flex; align-items: center; gap: 3px; min-width: 0; overflow: hidden; white-space: nowrap; }
+.mdot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.marr { font-size: 11px; color: var(--txt3); flex-shrink: 0; }
+.stitch { border: 1px solid #1a4a30; border-radius: 10px; background: #062218; padding: 12px; margin-bottom: 10px; }
+.stitch h4 { font-size: 11px; color: #3acf9e; margin-bottom: 7px; }
+.spills { display: flex; flex-wrap: wrap; gap: 4px; }
+.spill2 { font-size: 10px; padding: 2px 8px; border-radius: 20px; background: #0a2a20; color: #3acf9e; border: 1px solid #1a4a30; }
+.sthdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.stlbl { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.stn { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.stn-b { background: #0d2540; color: var(--blu); }
+.stn-p { background: #1a1540; color: var(--acc); }
+.stn-g { background: #0a2a20; color: var(--grn); }
+.sts { font-size: 10px; padding: 2px 9px; border-radius: 20px; font-weight: 500; }
+.sts-a { background: #0a2a20; color: var(--grn); border: 1px solid #1a4a30; }
+.sts-n { background: var(--bg2); color: var(--txt3); border: 1px solid var(--bdr); }
+.sts-i { background: #0d2540; color: var(--blu); border: 1px solid #1a3a5c; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--bdr); }
+.leg { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--txt3); }
+.ldot { width: 8px; height: 8px; border-radius: 3px; }
+
+/* ── DEAL FUNNEL ─────────────────────────────────────────── */
+.funnel-bar { margin: 6px 0; }
+.funnel-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--txt2); margin-bottom: 3px; }
+.funnel-track { background: var(--bg1); border-radius: 3px; height: 12px; overflow: hidden; position: relative; }
+.funnel-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+
+/* ── AI CHAT (sidebar-like) ──────────────────────────────── */
+.ai-chat-wrap { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; margin-bottom: 12px; padding: 4px; }
+.ai-msg { display: flex; gap: 8px; }
+.ai-msg.user { flex-direction: row-reverse; }
+.ai-msg-bubble { max-width: 85%; font-size: 12px; line-height: 1.65; padding: 9px 12px; border-radius: 10px; }
+.ai-msg.ai .ai-msg-bubble { background: var(--bg2); border: 1px solid var(--bdr); color: var(--txt); border-radius: 3px 10px 10px 10px; }
+.ai-msg.user .ai-msg-bubble { background: #1a1540; border: 1px solid #3a3080; color: var(--acc2); border-radius: 10px 3px 10px 10px; }
+.ai-avatar { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; margin-top: 2px; }
+.ai-avatar.ai-av { background: linear-gradient(135deg,#7f77dd,#5dcaa5); color: #fff; }
+.ai-avatar.user-av { background: var(--bg3); color: var(--txt2); font-weight: 700; }
+.ai-input-row { display: flex; gap: 8px; }
+.ai-input-row input { flex: 1; background: var(--bg1); border: 1px solid var(--bdr2); border-radius: 8px; padding: 9px 12px; font-size: 12px; color: var(--txt); font-family: var(--font); outline: none; }
+.ai-input-row input:focus { border-color: var(--acc); }
+.ai-send { padding: 9px 14px; background: var(--acc); border: none; border-radius: 8px; color: #fff; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 5px; font-family: var(--font); font-weight: 500; transition: filter .15s; }
+.ai-send:hover { filter: brightness(1.1); }
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(max-width:900px){
+  .sidebar { width: 56px; }
+  .sidebar .sb-link span, .sidebar .sb-badge, .sidebar .sb-section, .sidebar .sb-logo-txt, .sidebar .sb-logo-sub { display: none; }
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .full { grid-column: 1; }
+  .prow { flex-wrap: wrap; gap: 6px; }
+  .pn { flex: 1 1 calc(50% - 3px); }
+  .arr, .plus { display: none; }
+  .dgrid { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width:600px){
+  .kpi-row { grid-template-columns: 1fr; }
+  .wl-grid { grid-template-columns: 1fr; }
+}
+
+/* ── PRINT / PDF ─────────────────────────────────────────── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body { background: #fff !important; color: #111 !important; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; }
+  .shell { display: block !important; height: auto !important; overflow: visible !important; }
+  .sidebar, .topbar, .notif-area, .navrow, .addbtn, .rmbtn, .pipe-tabs, #notif-area { display: none !important; }
+  .main { display: block !important; overflow: visible !important; }
+  .content { padding: 0 !important; overflow: visible !important; }
+  .page { display: none !important; }
+  .page.active { display: block !important; }
+  /* Force print page to show pdf-report div */
+  #pdf-report { display: block !important; }
+  .pdf-report-inner { display: block !important; }
+
+  /* PDF report styles */
+  .pdf-cover { background: linear-gradient(135deg, #1a1540, #0d2540) !important; color: #fff !important; padding: 48px 40px; page-break-after: always; }
+  .pdf-cover h1 { font-size: 32px; font-weight: 300; margin: 0 0 8px; }
+  .pdf-cover .pdf-sub { font-size: 14px; opacity: .7; margin-bottom: 32px; }
+  .pdf-cover .pdf-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+  .pdf-meta-item { background: rgba(255,255,255,.08); border-radius: 8px; padding: 12px 16px; }
+  .pdf-meta-label { font-size: 9px; opacity: .6; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  .pdf-meta-val { font-size: 16px; font-weight: 500; }
+  .pdf-section { padding: 32px 40px; page-break-inside: avoid; border-bottom: 1px solid #eee; }
+  .pdf-section:last-child { border-bottom: none; }
+  .pdf-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #7f77dd; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .pdf-section-title::after { content: ''; flex: 1; height: 1px; background: #eee; }
+  .pdf-kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 8px; }
+  .pdf-kpi { border: 1px solid #e5e5e5; border-radius: 8px; padding: 14px; text-align: center; }
+  .pdf-kpi-val { font-size: 24px; font-weight: 300; color: #7f77dd; }
+  .pdf-kpi-label { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; }
+  .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 8px; }
+  .pdf-table th { background: #f5f5f5; text-align: left; padding: 8px 10px; font-size: 9px; text-transform: uppercase; letter-spacing: .05em; color: #666; border-bottom: 2px solid #ddd; }
+  .pdf-table td { padding: 7px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .pdf-table tr:last-child td { border-bottom: none; }
+  .pdf-badge { display: inline-block; font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 10px; }
+  .pdf-badge-won  { background: #d4f4e8; color: #1a7a50; }
+  .pdf-badge-lost { background: #fde8e8; color: #a02020; }
+  .pdf-badge-prop { background: #ede9ff; color: #5546cc; }
+  .pdf-badge-lead { background: #e0efff; color: #1a5a99; }
+  .pdf-badge-nego { background: #fff3e0; color: #a05000; }
+  .pdf-badge-h { background: #fde8e8; color: #a02020; }
+  .pdf-badge-m { background: #fff3e0; color: #a05000; }
+  .pdf-badge-l { background: #d4f4e8; color: #1a7a50; }
+  .pdf-risk-row { display: flex; gap: 12px; padding: 10px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 8px; }
+  .pdf-risk-level { font-size: 9px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+  .pdf-risk-body-title { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+  .pdf-risk-body-desc { font-size: 11px; color: #555; }
+  .pdf-footer { padding: 20px 40px; text-align: center; font-size: 9px; color: #aaa; border-top: 1px solid #eee; }
+  .pdf-pipeline-flow { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .pdf-pipe-node { border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px; flex: 1; min-width: 120px; }
+  .pdf-pipe-node-title { font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+  .pdf-pipe-node-items { font-size: 10px; color: #666; line-height: 1.6; }
+  .pdf-est-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .pdf-est-card { border: 1px solid #eee; border-radius: 8px; padding: 16px; text-align: center; }
+  .pdf-est-val { font-size: 28px; font-weight: 300; }
+  .pdf-est-label { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; }
+  .pdf-est-sub { font-size: 10px; color: #aaa; margin-top: 3px; }
+  .pdf-takeaway { background: #fffbf0; border-left: 4px solid #f5a623; border-radius: 0 8px 8px 0; padding: 14px 18px; font-size: 12px; color: #333; line-height: 1.7; margin-top: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div id="notif-area"></div>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-mark">G</div>
+      <div>
+        <div class="sb-logo-txt">GSC Pipeline</div>
+        <div class="sb-logo-sub">Command Centre</div>
+      </div>
+    </div>
+
+    <div class="sb-steps" id="sb-nav">
+      <div class="sb-section">Dashboard</div>
+      <button class="sb-link active" onclick="navTo('dash')"><i class="ti ti-dashboard sb-icon"></i><span>Overview</span></button>
+      <button class="sb-link" onclick="navTo('deals')"><i class="ti ti-briefcase sb-icon"></i><span>Deal Tracker</span><span class="sb-badge" id="deal-badge">0</span></button>
+      <button class="sb-link" onclick="navTo('pipeline-advisor')"><i class="ti ti-sparkles sb-icon"></i><span>Pipeline Advisor</span></button>
+
+      <div class="sb-section">Pipeline</div>
+      <button class="sb-link" onclick="navTo('step1'); setStep(1)"><i class="ti ti-settings sb-icon"></i><span>1. Project setup</span></button>
+      <button class="sb-link" onclick="navTo('step2'); setStep(2)"><i class="ti ti-upload sb-icon"></i><span>2. Raw files</span></button>
+      <button class="sb-link" onclick="navTo('step3'); setStep(3)"><i class="ti ti-wand sb-icon"></i><span>3. Extraction</span></button>
+      <button class="sb-link" onclick="navTo('step4'); setStep(4)"><i class="ti ti-users sb-icon"></i><span>4. SME review</span></button>
+      <button class="sb-link" onclick="navTo('step5'); setStep(5)"><i class="ti ti-adjustments sb-icon"></i><span>5. Parameters</span></button>
+      <button class="sb-link" onclick="navTo('step6'); setStep(6)"><i class="ti ti-chart-bar sb-icon"></i><span>6. Pipeline view</span></button>
+
+      <div class="sb-section">Analysis</div>
+      <button class="sb-link" onclick="navTo('risks')"><i class="ti ti-alert-triangle sb-icon"></i><span>Risk Matrix</span></button>
+      <button class="sb-link" onclick="navTo('winloss')"><i class="ti ti-trophy sb-icon"></i><span>Win / Loss</span></button>
+    </div>
+
+    <div class="sb-bottom">
+      <button class="sb-link" onclick="exportJSON()"><i class="ti ti-download sb-icon"></i><span>Export JSON</span></button>
+      <button class="sb-link" onclick="exportPDF()"><i class="ti ti-file-type-pdf sb-icon"></i><span>Export PDF</span></button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <button class="collapse-btn" onclick="toggleSidebar()" title="Toggle sidebar"><i class="ti ti-layout-sidebar"></i></button>
+      <div style="flex:1">
+        <div class="topbar-title" id="topbar-title">Overview</div>
+        <div class="topbar-sub" id="topbar-sub">GSC Pre-sales Command Centre</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="tba" onclick="saveState()" title="Save to browser"><i class="ti ti-device-floppy"></i> <span>Save</span></button>
+        <button class="tba" onclick="exportJSON()"><i class="ti ti-download"></i> <span>JSON</span></button>
+        <button class="tba" onclick="exportPDF()" title="Export PDF report"><i class="ti ti-file-type-pdf"></i> <span>PDF</span></button>
+        <button class="tba primary" id="topbar-cta" onclick="goNextStep()"><i class="ti ti-arrow-right"></i> <span>Continue</span></button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ────────────────────── DASHBOARD ── -->
+      <div class="page active" id="pg-dash">
+        <div class="kpi-row">
+          <div class="kpi kpi-acc">
+            <i class="ti ti-briefcase kpi-icon"></i>
+            <div class="kpi-label">Active deals</div>
+            <div class="kpi-val" id="kpi-deals">0</div>
+            <div class="kpi-sub">In pipeline</div>
+            <div class="kpi-delta up" id="kpi-deals-d" style="display:none"><i class="ti ti-trending-up"></i> —</div>
+          </div>
+          <div class="kpi kpi-grn">
+            <i class="ti ti-clock kpi-icon"></i>
+            <div class="kpi-label">Est. hours</div>
+            <div class="kpi-val" id="kpi-hrs">—</div>
+            <div class="kpi-sub">From estimation step</div>
+          </div>
+          <div class="kpi kpi-amb">
+            <i class="ti ti-users kpi-icon"></i>
+            <div class="kpi-label">Team size</div>
+            <div class="kpi-val" id="kpi-team">—</div>
+            <div class="kpi-sub">People scoped</div>
+          </div>
+          <div class="kpi kpi-red">
+            <i class="ti ti-alert-triangle kpi-icon"></i>
+            <div class="kpi-label">Gaps flagged</div>
+            <div class="kpi-val" id="kpi-gaps">—</div>
+            <div class="kpi-sub">Missing fields</div>
+          </div>
+        </div>
+
+        <!-- Quick status -->
+        <div class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title"><i class="ti ti-activity"></i> Pipeline health</div>
+            <button class="tba" onclick="navTo('step1');setStep(1)"><i class="ti ti-plus"></i> New project</button>
+          </div>
+          <div id="dash-health">
+            <div class="callout amber"><i class="ti ti-star"></i>Set up a project in Step 1 and work through the pipeline to see health metrics here.</div>
+          </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title"><i class="ti ti-list"></i> Quick actions</div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <button class="wl-card" style="cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);border-radius:var(--r);padding:16px;text-align:left" onclick="navTo('step1');setStep(1)">
+              <i class="ti ti-file-plus" style="font-size:22px;color:var(--acc);display:block;margin-bottom:8px"></i>
+              <div style="font-size:12px;font-weight:600">New pipeline</div>
+              <div style="font-size:10px;color:var(--txt2);margin-top:2px">Start from Step 1</div>
+            </button>
+            <button class="wl-card" style="cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);border-radius:var(--r);padding:16px;text-align:left" onclick="navTo('pipeline-advisor')">
+              <i class="ti ti-message-chatbot" style="font-size:22px;color:var(--acc2);display:block;margin-bottom:8px"></i>
+              <div style="font-size:12px;font-weight:600">Pipeline Advisor</div>
+              <div style="font-size:10px;color:var(--txt2);margin-top:2px">Ask about your deal</div>
+            </button>
+            <button class="wl-card" style="cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);border-radius:var(--r);padding:16px;text-align:left" onclick="navTo('deals')">
+              <i class="ti ti-chart-pie" style="font-size:22px;color:var(--grn);display:block;margin-bottom:8px"></i>
+              <div style="font-size:12px;font-weight:600">Deal tracker</div>
+              <div style="font-size:10px;color:var(--txt2);margin-top:2px">Manage all deals</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ────────────────────── DEAL TRACKER ── -->
+      <div class="page" id="pg-deals">
+        <div class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title"><i class="ti ti-briefcase"></i> Deal tracker</div>
+            <button class="tba primary" onclick="addDeal()"><i class="ti ti-plus"></i> Add deal</button>
+          </div>
+          <div class="panel-desc">Track all presales opportunities. Update stage, value, and owner as deals progress.</div>
+
+          <!-- Funnel summary -->
+          <div id="funnel-wrap" style="margin-bottom:16px"></div>
+
+          <table class="tbl" id="deals-tbl">
+            <thead>
+              <tr>
+                <th>Deal / client</th>
+                <th>Stage</th>
+                <th>Value ($k)</th>
+                <th>Owner</th>
+                <th>Due date</th>
+                <th>Probability</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="deals-body"></tbody>
+          </table>
+          <button class="addbtn" onclick="addDeal()"><i class="ti ti-plus"></i> Add deal</button>
+        </div>
+      </div>
+
+      <!-- ────────────────────── AI ADVISOR ── -->
+      <div class="page" id="pg-pipeline-advisor">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title"><i class="ti ti-message-chatbot"></i> Pipeline Advisor</div></div>
+          <div class="panel-desc">Use this advisor to explore deal strategy, scope risks, competitive positioning, and estimation questions.</div>
+          <div class="ai-chat-wrap" id="ai-chat-msgs">
+            <div class="ai-msg ai">
+              <div class="ai-avatar ai-av"><i class="ti ti-sparkles" style="font-size:11px"></i></div>
+              <div class="ai-msg-bubble">Hello! I can help with deal strategy, scope risks, win probability analysis, competitive positioning, and estimation questions. What would you like to explore?</div>
+            </div>
+          </div>
+          <div class="ai-input-row">
+            <input type="text" id="ai-chat-inp" placeholder="Ask about your deal, scope, risks or strategy…" onkeydown="if(event.key==='Enter')sendAdvisorMsg()">
+            <button class="ai-send" onclick="sendAdvisorMsg()"><i class="ti ti-send"></i> Ask</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ────────────────────── RISK MATRIX ── -->
+      <div class="page" id="pg-risks">
+        <div class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title"><i class="ti ti-alert-triangle"></i> Risk matrix</div>
+            <button class="tba primary" onclick="generateRisks()"><i class="ti ti-sparkles"></i> Auto-generate risks</button>
+          </div>
+          <div class="panel-desc">Automatically identifies risks from your project setup and extraction results, or add manually.</div>
+          <div id="risk-list"></div>
+          <button class="addbtn" onclick="addRiskManual()"><i class="ti ti-plus"></i> Add risk manually</button>
+        </div>
+      </div>
+
+      <!-- ────────────────────── WIN / LOSS ── -->
+      <div class="page" id="pg-winloss">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title"><i class="ti ti-trophy"></i> Win / Loss analysis</div></div>
+          <div class="wl-grid">
+            <div class="wl-card win-card">
+              <div class="wl-big" id="wl-won" style="color:var(--grn)">0</div>
+              <div class="wl-lbl">Deals won</div>
+            </div>
+            <div class="wl-card loss-card">
+              <div class="wl-big" id="wl-lost" style="color:var(--red)">0</div>
+              <div class="wl-lbl">Deals lost</div>
+            </div>
+          </div>
+          <div class="panel-hdr"><div class="panel-title"><i class="ti ti-chart-pie"></i> Win rate</div></div>
+          <div style="margin-bottom:16px">
+            <div class="prog-wrap" style="height:12px">
+              <div class="prog-bar" id="win-rate-bar" style="width:0%"></div>
+            </div>
+            <div style="font-size:11px;color:var(--txt2);margin-top:5px"><span id="win-rate-pct">0%</span> win rate across closed deals</div>
+          </div>
+          <div class="panel-title" style="margin-bottom:10px;font-size:12px"><i class="ti ti-list" style="color:var(--acc)"></i> Closed deals</div>
+          <div id="wl-deal-list"><div class="callout"><i class="ti ti-info-circle"></i> Mark deals as Won or Lost in the Deal Tracker to see analysis here.</div></div>
+        </div>
+      </div>
+
+      <!-- ────────────────────── STEP 1 ── -->
+      <div class="page" id="pg-step1">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title"><i class="ti ti-settings"></i> Project setup</div></div>
+          <div class="panel-desc">Enter basic project details. The pipeline and automated analysis are driven by your raw files in the next step.</div>
+          <div class="g2">
+            <div class="fg"><label>Project name</label><input type="text" id="ip-proj" placeholder="e.g. Acme Corp ERP Implementation"></div>
+            <div class="fg"><label>Client / organisation</label><input type="text" id="ip-client" placeholder="e.g. Acme Corporation"></div>
+            <div class="fg">
+              <label>Solution / technology type</label>
+              <select id="ip-sol">
+                <option value="">— select to auto-load standard template —</option>
+                <option value="erp">ERP / Oracle Fusion</option>
+                <option value="cloud">Cloud Migration (OCI / AWS / Azure)</option>
+                <option value="data">Data &amp; Analytics / EDW</option>
+                <option value="custom">Custom Application Development</option>
+                <option value="security">Cybersecurity</option>
+                <option value="digital">Digital Transformation</option>
+                <option value="ai">AI / ML Implementation</option>
+                <option value="infra">Infrastructure &amp; DevOps</option>
+                <option value="map">Oracle MAP / Migration (v6 template)</option>
+              </select>
+              <div class="hint">Standard baseline inputs are pre-loaded from this selection</div>
+            </div>
+            <div class="fg">
+              <label>Pipeline type</label>
+              <select id="ip-pipe" onchange="toggleDomains()">
+                <option value="single">Single-domain</option>
+                <option value="multi">Multi-domain</option>
+              </select>
+            </div>
+            <div class="fg full" id="dom-wrap" style="display:none">
+              <label>Domains</label>
+              <div class="hint" style="margin-bottom:6px">Each domain runs its own normalisation and SME review independently</div>
+              <div id="dom-list"></div>
+              <button class="addbtn" onclick="addDomain()"><i class="ti ti-plus"></i> Add domain</button>
+            </div>
+            <div class="fg">
+              <label>Current DDPBO phase</label>
+              <select id="ip-phase">
+                <option value="discover">Discover (Pre-sales)</option>
+                <option value="define">Define</option>
+                <option value="design">Design</option>
+                <option value="plan">Plan</option>
+                <option value="build">Build</option>
+                <option value="operate">Operate</option>
+              </select>
+            </div>
+            <div class="fg"><label>Deal owner / SA</label><input type="text" id="ip-owner" placeholder="e.g. Jane Smith"></div>
+            <div class="fg"><label>Target close date</label><input type="text" id="ip-close" placeholder="e.g. 2026-09-30"></div>
+            <div class="fg full"><label>Executive summary / context</label><textarea id="ip-context" placeholder="High-level context about the client, their challenges, competitive landscape, key win themes…" style="min-height:80px"></textarea></div>
+          </div>
+        </div>
+        <div class="navrow">
+          <button class="btn pri" onclick="goStep(2)">Next — upload raw files <i class="ti ti-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- ────────────────────── STEP 2 ── -->
+      <div class="page" id="pg-step2">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title"><i class="ti ti-upload"></i> Upload raw files</div></div>
+          <div class="panel-desc">Upload any client documents, emails, SOWs, spreadsheets or meeting notes. They are read and structured inputs are extracted automatically.</div>
+          <div class="uz" id="uz">
+            <div class="uz-icon"><i class="ti ti-cloud-upload"></i></div>
+            <div class="uz-title">Click here to upload files</div>
+            <div class="uz-sub">or drag and drop — SOW, emails, docs, spreadsheets, interview notes</div>
+          </div>
+          <input type="file" id="fileinp" multiple style="display:none" onchange="pickFiles(this.files)">
+          <div id="flist" class="flist"></div>
+          <div class="fg full" style="margin-top:16px">
+            <label>Or paste raw text directly</label>
+            <textarea id="ip-raw" placeholder="Paste emails, meeting notes, requirements, client responses — anything available, even informal or incomplete…" style="min-height:100px;margin-top:5px"></textarea>
+            <div class="hint">Inputs come from scattered raw outputs — paste anything available, even if incomplete</div>
+          </div>
+        </div>
+        <div class="navrow">
+          <button class="btn" onclick="goStep(1)"><i class="ti ti-arrow-left"></i> Back</button>
+          <button class="btn pri" onclick="tryRunExtract()"><i class="ti ti-search"></i> Analyse files</button>
+        </div>
+      </div>
+
+      <!-- ────────────────────── STEP 3 ── -->
+      <div class="page" id="pg-step3">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title"><i class="ti ti-wand"></i> Normalisation &amp; gap detection</div></div>
+          <div class="panel-desc">Files are read and mapped to the standard template. Missing inputs are automatically flagged — SMEs only fill what's missing.</div>
+          <div id="lbox" class="lbox" style="display:none">
+            <div class="spin"></div>
+            <div>
+              <div style="font-size:13px;color:var(--txt2)">Processing your raw files…</div>
+              <div id="lmsg" style="font-size:11px;color:var(--txt3);margin-top:4px">Parsing documents and extracting structured inputs</div>
+            </div>
+          </div>
+          <div id="empty-state" class="callout" style="margin-bottom:10px">
+            <i class="ti ti-arrow-left" style="flex-shrink:0"></i>
+            <div>Go back to <strong>Step 2</strong> and upload files or paste raw text, then click <strong>Analyse files</strong> to run the extraction.</div>
+          </div>
+          <div id="rbox" style="display:none">
+            <div class="aibox"><div class="aibox-hdr"><i class="ti ti-sparkles"></i> Extraction summary</div><p id="ai-sum"></p></div>
+            <div style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px;display:flex;align-items:center;gap:8px">
+              <i class="ti ti-table"></i> Extracted &amp; normalised inputs
+              <span style="flex:1;height:1px;background:var(--bdr)"></span>
+            </div>
+            <table class="tbl">
+              <thead><tr><th style="width:22%">Input field</th><th style="width:16%">Status</th><th>Value / source</th><th style="width:6%"></th></tr></thead>
+              <tbody id="gap-body"></tbody>
+            </table>
+            <button class="addbtn" onclick="addGapRow('','missing','')"><i class="ti ti-plus"></i> Add field</button>
+          </div>
+        </div>
+        <div class="navrow">
+          <button class="btn" onclick="goStep(2)"><i class="ti ti-arrow-left"></i> Back</button>
+          <button class="btn pri" id="btn-sme" data-disabled onclick="goStep(4);buildMissing()">SME review <i class="ti ti-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- ────────────────────── STEP 4 ── -->
+      <div class="page" id="pg-step4">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title"><i class="ti ti-users"></i> SME review gate</div></div>
+          <div class="panel-desc">SMEs review only the flagged gaps — fields that could not be extracted. Each SME documents their domain assumptions clearly before estimation begins.</div>
+          <div id="miss-panel"></div>
+          <div style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px;display:flex;align-items:center;gap:8px">
+            <i class="ti ti-user-check"></i> SME reviewers &amp; assumptions
+            <span style="flex:1;height:1px;background:var(--bdr)"></span>
+          </div>
+          <table class="tbl">
+            <thead><tr><th style="width:18%">SME name</th><th style="width:20%">Domain</th><th>Assumptions for missing inputs</th><th style="width:12%">Status</th><th style="width:5%"></th></tr></thead>
+            <tbody id="sme-body">
+              <tr>
+                <td><input type="text" placeholder="e.g. John Smith"></td>
+                <td><input type="text" placeholder="e.g. ERP Finance"></td>
+                <td><textarea placeholder="What assumptions has this SME made for the flagged gaps?"></textarea></td>
+                <td><select><option value="pending">Pending</option><option value="review">In review</option><option value="approved">Approved</option></select></td>
+                <td><button class="rmbtn" onclick="this.closest('tr').remove()"><i class="ti ti-x"></i></button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="addbtn" onclick="addSme()"><i class="ti ti-plus"></i> Add SME</button>
+          <div style="margin-top:18px">
+            <div style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">DDPBO phase mapping — select which phases this proposal feeds into</div>
+            <div class="phases" id="ph-row">
+              <button class="pp pp1 on" onclick="this.classList.toggle('on')"><span class="ppi"><i class="ti ti-search"></i></span><span class="ppl">Discover</span></button>
+              <button class="pp pp2 on" onclick="this.classList.toggle('on')"><span class="ppi"><i class="ti ti-clipboard-list"></i></span><span class="ppl">Define</span></button>
+              <button class="pp pp3"    onclick="this.classList.toggle('on')"><span class="ppi"><i class="ti ti-pencil-minus"></i></span><span class="ppl">Design</span></button>
+              <button class="pp pp4"    onclick="this.classList.toggle('on')"><span class="ppi"><i class="ti ti-calendar-event"></i></span><span class="ppl">Plan</span></button>
+              <button class="pp pp5"    onclick="this.classList.toggle('on')"><span class="ppi"><i class="ti ti-hammer"></i></span><span class="ppl">Build</span></button>
+              <button class="pp pp6"    onclick="this.classList.toggle('on')"><span class="ppi"><i class="ti ti-activity"></i></span><span class="ppl">Operate</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="navrow">
+          <button class="btn" onclick="goStep(3)"><i class="ti ti-arrow-left"></i> Back</button>
+          <button class="btn pri" onclick="goStep(5)">Estimation parameters <i class="ti ti-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- ────────────────────── STEP 5 ── -->
+      <div class="page" id="pg-step5">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title"><i class="ti ti-adjustments"></i> Estimation parameters</div></div>
+          <div class="panel-desc">Effort rates and productivity factors for SAE generation. Adjust to match your delivery model.</div>
+          <div class="g2">
+            <div class="fg"><label>Team size (people)</label><div class="rrow"><input type="range" id="ip-team" min="1" max="50" value="5" oninput="setRv('ip-team','rv-team',false)"><span class="rv" id="rv-team">5</span></div></div>
+            <div class="fg"><label>Timeline (weeks)</label><div class="rrow"><input type="range" id="ip-weeks" min="1" max="52" value="12" oninput="setRv('ip-weeks','rv-weeks',false)"><span class="rv" id="rv-weeks">12</span></div></div>
+            <div class="fg"><label>Effort rate (hrs/day per person)</label><div class="rrow"><input type="range" id="ip-rate" min="4" max="10" value="8" oninput="setRv('ip-rate','rv-rate',false)"><span class="rv" id="rv-rate">8</span></div></div>
+            <div class="fg"><label>Productivity factor</label><div class="rrow"><input type="range" id="ip-prod" min="50" max="100" value="80" oninput="setRv('ip-prod','rv-prod',true)"><span class="rv" id="rv-prod">80%</span></div></div>
+            <div class="fg"><label>Blended daily rate ($)</label><div class="rrow"><input type="range" id="ip-rate2" min="500" max="5000" step="100" value="1200" oninput="setRv2()"><span class="rv" id="rv-rate2">$1,200</span></div></div>
+            <div class="fg"><label>Contingency (%)</label><div class="rrow"><input type="range" id="ip-cont" min="0" max="40" value="15" oninput="setRv('ip-cont','rv-cont',true)"><span class="rv" id="rv-cont">15%</span></div></div>
+            <div class="fg full"><label>Scope highlights</label><textarea id="ip-scope" placeholder="Key phases or workstreams — e.g. Phase 1: Discovery, Phase 2: Build, Phase 3: Deploy…"></textarea></div>
+          </div>
+
+          <!-- Live estimate preview -->
+          <div style="margin-top:16px;background:var(--bg1);border:1px solid var(--bdr);border-radius:var(--r);padding:14px">
+            <div style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Live estimate preview</div>
+            <div class="g3">
+              <div><div style="font-size:9px;color:var(--txt3)">Total hours</div><div style="font-size:20px;font-weight:300;color:var(--acc)" id="prev-hrs">—</div></div>
+              <div><div style="font-size:9px;color:var(--txt3)">Base cost</div><div style="font-size:20px;font-weight:300;color:var(--amb)" id="prev-cost">—</div></div>
+              <div><div style="font-size:9px;color:var(--txt3)">With contingency</div><div style="font-size:20px;font-weight:300;color:var(--grn)" id="prev-total">—</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="navrow">
+          <button class="btn" onclick="goStep(4)"><i class="ti ti-arrow-left"></i> Back</button>
+          <button class="btn grn" onclick="buildPipeline()"><i class="ti ti-chart-bar"></i> Generate pipeline view</button>
+        </div>
+      </div>
+
+      <!-- ────────────────────── STEP 6 ── -->
+      <div class="page" id="pg-step6">
+        <div id="sumbar" class="sumbar"></div>
+        <div class="pipe-tabs">
+          <button class="pt on" id="tb-single" onclick="showTab('single')"><i class="ti ti-layout-sidebar"></i> Single-domain</button>
+          <button class="pt" id="tb-multi" onclick="showTab('multi')" style="display:none"><i class="ti ti-layout-grid"></i> Multi-domain</button>
+          <button class="pt" id="tb-ddpbo" onclick="showTab('ddpbo')"><i class="ti ti-repeat"></i> DDPBO</button>
+          <button class="pt" id="tb-walk" onclick="showTab('walk')"><i class="ti ti-player-play"></i> Walkthrough</button>
+          <button class="pt" id="tb-est" onclick="showTab('est')"><i class="ti ti-chart-bar"></i> Estimate breakdown</button>
+        </div>
+
+        <!-- SINGLE -->
+        <div id="tc-single">
+          <div class="panel" style="padding:16px">
+            <div class="sthdr"><div class="stlbl"><div class="stn stn-b">1</div>Collect raw inputs</div><div class="sts sts-a"><i class="ti ti-clock"></i> In progress</div></div>
+            <div class="prow" id="s1row"></div>
+            <div id="gout" style="display:none" class="callout"><i class="ti ti-alert-triangle" style="flex-shrink:0"></i><div id="gchips"></div></div>
+            <div id="sout" style="display:none" class="callout green"><i class="ti ti-user-check" style="flex-shrink:0"></i><div id="schips"></div></div>
+            <div class="callout"><i class="ti ti-star" style="flex-shrink:0"></i>Auto-extracted inputs + SME-approved assumptions feed the pre-sales plugin in step 2</div>
+            <div style="text-align:center;font-size:18px;color:var(--txt3);margin:10px 0">↓</div>
+            <div class="sthdr"><div class="stlbl"><div class="stn stn-p">2</div>Estimation &amp; proposal generation</div><div class="sts sts-n">Pending</div></div>
+            <div class="prow" id="s2row"></div>
+            <div class="legend">
+              <div class="leg"><div class="ldot" style="background:#1a3a5c"></div>Input</div>
+              <div class="leg"><div class="ldot" style="background:#1a4a30"></div>Normalise</div>
+              <div class="leg"><div class="ldot" style="background:#4a3000"></div>SME review</div>
+              <div class="leg"><div class="ldot" style="background:#2a2060"></div>Discovery</div>
+              <div class="leg"><div class="ldot" style="background:#4a2800"></div>SAE</div>
+              <div class="leg"><div class="ldot" style="background:#1a4a30"></div>Output</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MULTI -->
+        <div id="tc-multi" style="display:none">
+          <div class="panel" style="padding:16px">
+            <div class="sthdr"><div class="stlbl"><div class="stn stn-b">∞</div>Domain-level processing</div><div class="sts sts-i">Each domain independent</div></div>
+            <div class="drows" id="mrows"></div>
+            <div style="display:flex;align-items:center;gap:8px;margin:8px 0"><div style="flex:1;height:1px;background:var(--bdr)"></div><span style="font-size:10px;color:var(--txt3)">SAEs from all domains</span><div style="flex:1;height:1px;background:var(--bdr)"></div></div>
+            <div class="stitch"><h4><i class="ti ti-puzzle"></i> Stitching skill — consolidation</h4><div class="spills"><div class="spill2">Merge SAEs</div><div class="spill2">Resolve overlaps</div><div class="spill2">Harmonise assumptions</div><div class="spill2">Align dependencies</div><div class="spill2">Unified scope</div></div></div>
+            <div style="text-align:center;font-size:18px;color:var(--txt3);margin:10px 0">↓</div>
+            <div style="display:flex;gap:10px">
+              <div class="pn pn-t" style="flex:1"><div class="pnt">Stitched SAE</div><ul id="sitems"></ul></div>
+              <div style="display:flex;align-items:center;padding:0 6px;font-size:16px;color:var(--txt3)">→</div>
+              <div class="pn pn-p" style="flex:1"><div class="pnt">Proposal document</div><ul><li>Executive summary</li><li>Unified scope</li><li>Schedule &amp; pricing</li><li>Terms &amp; conditions</li></ul></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DDPBO -->
+        <div id="tc-ddpbo" style="display:none">
+          <div class="panel" style="padding:16px">
+            <div class="panel-hdr"><div class="panel-title"><i class="ti ti-repeat"></i> DDPBO phase alignment</div></div>
+            <div class="dgrid" id="dgrid"></div>
+            <div class="callout amber"><i class="ti ti-info-circle"></i>Highlighted phases are active for this proposal. The normalised template scope becomes the baseline handed to the delivery team.</div>
+          </div>
+        </div>
+
+        <!-- WALKTHROUGH -->
+        <div id="tc-walk" style="display:none">
+          <div class="panel">
+            <div class="panel-hdr"><div class="panel-title"><i class="ti ti-player-play"></i> Step-by-step walkthrough</div></div>
+            <div class="wt-tabs" id="wtsteps"></div>
+            <div id="wtcontent"></div>
+            <div class="wt-nav">
+              <div class="wt-ctr" id="wtctr"></div>
+              <div class="wt-dots" id="wtdots"></div>
+              <div class="wt-btns">
+                <button class="wt-btn" onclick="wtNav(-1)"><i class="ti ti-arrow-left"></i> Prev</button>
+                <button class="wt-btn pp" id="wtnext" onclick="wtNav(1)">Next <i class="ti ti-arrow-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ESTIMATE BREAKDOWN -->
+        <div id="tc-est" style="display:none">
+          <div class="panel">
+            <div class="panel-hdr"><div class="panel-title"><i class="ti ti-chart-bar"></i> Estimate breakdown</div></div>
+            <div id="est-detail"></div>
+            <div class="takeaway" id="takeaway"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════
+var STATE = {
+  step: 1,
+  deals: [],
+  risks: [],
+  chat: [],
+  pipelineBuilt: false
+};
+var files = [];
+var extractDone = false;
+var wtCur = 0, wtList = [];
+
+// ── TEMPLATES ─────────────────────────────────────────────
+var tpls = {
+  erp:    ['Current ERP system','Number of users','Modules in scope','Data migration volume','Integration count','Go-live date','Customisation level','Training requirements','Cutover strategy','Budget range','Stakeholders'],
+  cloud:  ['Current infrastructure','Workloads to migrate','Target cloud platform','Data volume','Network topology','Compliance requirements','Downtime tolerance','Rollback plan','Security posture'],
+  data:   ['Data sources','Data volume & velocity','Target analytics platform','Reporting requirements','Data quality standards','Data governance','Current BI tools','Success KPIs'],
+  map:    ['Source system details','Migration methodology','v6 template fields','Data mapping requirements','Testing strategy','Cutover window','Rollback approach'],
+  custom: ['Functional requirements','Technical stack','User base size','Integration points','Performance requirements','Security requirements','Deployment model'],
+  ai:     ['Use case definition','Data availability','Model requirements','Integration needs','Governance requirements','Performance KPIs','Training data sources'],
+  security:['Current security posture','Compliance frameworks','Asset inventory','Threat landscape','Remediation priorities','Budget constraints'],
+  digital: ['Current state assessment','Target operating model','Change management','Technology stack','Process automation scope','Stakeholder map'],
+  infra:  ['Current infrastructure inventory','Target architecture','Availability requirements','Disaster recovery','Automation tooling','Monitoring requirements'],
+};
+
+// ── NAVIGATION ────────────────────────────────────────────
+var PAGE_MAP = {
+  dash:'pg-dash', deals:'pg-deals', 'pipeline-advisor':'pg-pipeline-advisor',
+  risks:'pg-risks', winloss:'pg-winloss',
+  step1:'pg-step1', step2:'pg-step2', step3:'pg-step3',
+  step4:'pg-step4', step5:'pg-step5', step6:'pg-step6'
+};
+var PAGE_TITLES = {
+  dash:'Overview', deals:'Deal Tracker', 'pipeline-advisor':'Pipeline Advisor',
+  risks:'Risk Matrix', winloss:'Win / Loss Analysis',
+  step1:'Step 1 — Project Setup', step2:'Step 2 — Upload Raw Files',
+  step3:'Step 3 — Extraction', step4:'Step 4 — SME Review',
+  step5:'Step 5 — Estimation', step6:'Step 6 — Pipeline View'
+};
+
+function navTo(key) {
+  Object.keys(PAGE_MAP).forEach(function(k) {
+    var el = document.getElementById(PAGE_MAP[k]);
+    if (el) el.className = el.className.replace(' active','').replace('active ','').replace('active','');
+  });
+  var target = document.getElementById(PAGE_MAP[key]);
+  if (target) target.className = (target.className + ' active').trim();
+
+  // Sidebar active link
+  document.querySelectorAll('.sb-link').forEach(function(b){ b.classList.remove('active'); });
+  var links = document.querySelectorAll('.sb-link');
+  links.forEach(function(b){
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+key+"'")) b.classList.add('active');
+  });
+
+  document.getElementById('topbar-title').textContent = PAGE_TITLES[key] || key;
+  if (['step1','step2','step3','step4','step5','step6'].includes(key)) {
+    document.getElementById('topbar-sub').textContent = 'Pipeline — Step ' + key.replace('step','');
+    document.getElementById('topbar-cta').style.display = 'flex';
+  } else {
+    document.getElementById('topbar-sub').textContent = 'GSC Pre-sales Command Centre';
+    document.getElementById('topbar-cta').style.display = key === 'dash' ? 'flex' : 'none';
+  }
+  updateDash();
+}
+
+function setStep(n) { STATE.step = n; }
+function goStep(n) {
+  STATE.step = n;
+  navTo('step' + n);
+  // update step 5 preview
+  if (n === 5) updateEstPreview();
+}
+function goNextStep() {
+  if (STATE.step < 6) goStep(STATE.step + 1);
+  else navTo('dash');
+}
+function toggleSidebar() {
+  var s = document.getElementById('sidebar');
+  s.classList.toggle('collapsed');
+}
+
+// ── FILE UPLOAD ───────────────────────────────────────────
+(function(){
+  var uz = document.getElementById('uz');
+  uz.addEventListener('click', function(){ document.getElementById('fileinp').click(); });
+  uz.addEventListener('dragover', function(e){ e.preventDefault(); uz.classList.add('drag'); });
+  uz.addEventListener('dragleave', function(){ uz.classList.remove('drag'); });
+  uz.addEventListener('drop', function(e){ e.preventDefault(); uz.classList.remove('drag'); pickFiles(e.dataTransfer.files); });
+})();
+
+function pickFiles(fl) {
+  for (var i = 0; i < fl.length; i++) {
+    if (!files.find(function(f){ return f.name === fl[i].name; })) files.push(fl[i]);
+  }
+  renderFiles();
+}
+function removeFile(i) { files.splice(i,1); renderFiles(); }
+function renderFiles() {
+  var el = document.getElementById('flist');
+  el.innerHTML = '';
+  files.forEach(function(f, idx) {
+    var d = document.createElement('div');
+    d.className = 'fi';
+    d.innerHTML = '<i class="ti ti-file-text" style="color:var(--blu);font-size:14px;flex-shrink:0"></i>' +
+      '<span class="fn">'+esc(f.name)+'</span>' +
+      '<span class="fs">'+(f.size/1024).toFixed(0)+'KB</span>';
+    var btn = document.createElement('button');
+    btn.innerHTML = '<i class="ti ti-x"></i>';
+    btn.onclick = function(){ removeFile(idx); };
+    d.appendChild(btn);
+    el.appendChild(d);
+  });
+}
+
+// ── HELPERS ───────────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function setRv(id,dvid,pct) { document.getElementById(dvid).textContent = pct ? document.getElementById(id).value+'%' : document.getElementById(id).value; updateEstPreview(); }
+function setRv2() {
+  var v = parseInt(document.getElementById('ip-rate2').value);
+  document.getElementById('rv-rate2').textContent = '$'+v.toLocaleString();
+  updateEstPreview();
+}
+function splitTxt(txt,max) {
+  if (!txt) return [];
+  return txt.split(/[,;\n]+/).map(function(s){return s.trim();}).filter(Boolean).slice(0,max);
+}
+function notify(msg, type) {
+  var area = document.getElementById('notif-area');
+  var n = document.createElement('div');
+  n.className = 'notif ' + (type||'ok');
+  n.innerHTML = '<i class="ti ti-'+(type==='err'?'alert-circle':'check')+' "></i>' + esc(msg);
+  area.appendChild(n);
+  setTimeout(function(){ n.style.opacity='0'; n.style.transform='translateX(20px)'; n.style.transition='.3s'; setTimeout(function(){ n.remove(); },300); }, 3000);
+}
+function updateEstPreview() {
+  var team  = parseInt(document.getElementById('ip-team').value)||5;
+  var weeks = parseInt(document.getElementById('ip-weeks').value)||12;
+  var rate  = parseInt(document.getElementById('ip-rate').value)||8;
+  var prod  = parseInt(document.getElementById('ip-prod').value)||80;
+  var daily = parseInt(document.getElementById('ip-rate2').value)||1200;
+  var cont  = parseInt(document.getElementById('ip-cont').value)||15;
+  var hrs = Math.round(team * weeks * 5 * rate * (prod/100));
+  var days = Math.round(hrs / rate);
+  var base = days * daily;
+  var total = Math.round(base * (1 + cont/100));
+  document.getElementById('prev-hrs').textContent  = hrs.toLocaleString() + ' hrs';
+  document.getElementById('prev-cost').textContent  = '$' + (base/1000).toFixed(0) + 'k';
+  document.getElementById('prev-total').textContent = '$' + (total/1000).toFixed(0) + 'k';
+}
+
+// ── DOMAINS ───────────────────────────────────────────────
+var dcols = ['#4a9eed','#5dcaa5','#f5a623','#3acf9e','#9f8ff0','#f07070'];
+function addDomain() {
+  var list = document.getElementById('dom-list');
+  var idx = list.children.length;
+  var color = dcols[idx % dcols.length];
+  var d = document.createElement('div');
+  d.style.cssText = 'display:flex;gap:8px;align-items:center;background:var(--bg1);border:1px solid var(--bdr2);border-radius:8px;padding:8px 10px;margin-bottom:6px';
+  var dot = document.createElement('div');
+  dot.style.cssText = 'width:10px;height:10px;border-radius:3px;flex-shrink:0;background:'+color;
+  var inp = document.createElement('input');
+  inp.type='text'; inp.placeholder='Domain '+(idx+1)+' name (e.g. Finance, HR)';
+  inp.style.cssText='flex:1;font-family:var(--font);font-size:13px;color:var(--txt);background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;padding:6px 10px;outline:none';
+  var btn = document.createElement('button');
+  btn.style.cssText='background:none;border:1px solid var(--bdr);border-radius:6px;padding:4px 8px;cursor:pointer;color:var(--txt3);font-size:11px';
+  btn.innerHTML='<i class="ti ti-trash"></i>';
+  btn.onclick=function(){ d.remove(); };
+  d.appendChild(dot); d.appendChild(inp); d.appendChild(btn);
+  list.appendChild(d);
+}
+function toggleDomains() {
+  var isMulti = document.getElementById('ip-pipe').value === 'multi';
+  document.getElementById('dom-wrap').style.display = isMulti ? 'block' : 'none';
+  if (isMulti && document.getElementById('dom-list').children.length===0) { addDomain(); addDomain(); addDomain(); }
+}
+
+// ── GAP TABLE ─────────────────────────────────────────────
+function addGapRow(field, status, value) {
+  var tb = document.getElementById('gap-body');
+  var tr = document.createElement('tr');
+  var opts = [{v:'extracted',l:'⚡ Extracted'},{v:'confirmed',l:'✓ Confirmed'},{v:'assumed',l:'~ Assumed'},{v:'missing',l:'✗ Missing'}]
+    .map(function(o){ return '<option value="'+o.v+'"'+(o.v===status?' selected':'')+'>'+o.l+'</option>'; }).join('');
+  tr.innerHTML =
+    '<td><input type="text" value="'+esc(field)+'" placeholder="Field name"></td>'+
+    '<td><select>'+opts+'</select></td>'+
+    '<td><textarea placeholder="Value extracted or assumption…">'+esc(value)+'</textarea></td>'+
+    '<td><button class="rmbtn" onclick="this.closest(\'tr\').remove()"><i class="ti ti-x"></i></button></td>';
+  tb.appendChild(tr);
+}
+
+// ── SME TABLE ─────────────────────────────────────────────
+function addSme() {
+  var tb = document.getElementById('sme-body');
+  var tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td><input type="text" placeholder="SME name"></td>'+
+    '<td><input type="text" placeholder="Domain / expertise"></td>'+
+    '<td><textarea placeholder="Assumptions made for missing inputs…"></textarea></td>'+
+    '<td><select><option value="pending">Pending</option><option value="review">In review</option><option value="approved">Approved</option></select></td>'+
+    '<td><button class="rmbtn" onclick="this.closest(\'tr\').remove()"><i class="ti ti-x"></i></button></td>';
+  tb.appendChild(tr);
+}
+
+function buildMissing() {
+  var rows = document.querySelectorAll('#gap-body tr');
+  var miss=[], assum=[];
+  rows.forEach(function(tr){
+    var tds=tr.querySelectorAll('td');
+    var field=tds[0]&&tds[0].querySelector('input')?tds[0].querySelector('input').value.trim():'';
+    var status=tds[1]&&tds[1].querySelector('select')?tds[1].querySelector('select').value:'';
+    if(!field) return;
+    if(status==='missing') miss.push(field);
+    if(status==='assumed') assum.push(field);
+  });
+  var el=document.getElementById('miss-panel');
+  if(!miss.length&&!assum.length) {
+    el.innerHTML='<div class="callout green"><i class="ti ti-check" style="flex-shrink:0"></i>All fields were extracted from raw files. SMEs can still validate and review.</div>';
+  } else {
+    el.innerHTML='<div class="callout amber"><i class="ti ti-alert-triangle" style="flex-shrink:0"></i><div><strong>SMEs need to fill '+miss.length+' missing field(s)</strong> — '+assum.length+' assumed<br><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">'+
+      miss.map(function(f){return '<span class="badge badge-missing"><i class="ti ti-x" style="font-size:10px"></i>'+esc(f)+'</span>';}).join('')+
+      assum.map(function(f){return '<span class="badge badge-assumed"><i class="ti ti-minus" style="font-size:10px"></i>'+esc(f)+'</span>';}).join('')+
+      '</div></div></div>';
+  }
+}
+
+// ── CLAUDE API BRIDGE ────────────────────────────────────
+// ── API KEY — paste your key between the quotes below ────
+// Open this file in a text editor and replace the empty string with your key
+var API_KEY = '';  // <-- PASTE YOUR KEY HERE e.g. 'sk-ant-api03-...'
+
+function callClaude(prompt, maxTokens) {
+  if (!API_KEY) {
+    return Promise.reject(new Error('NO_KEY'));
+  }
+  return fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: maxTokens || 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  })
+  .then(function(r) {
+    if (!r.ok) return r.text().then(function(t){ throw new Error('HTTP '+r.status+': '+t.slice(0,200)); });
+    return r.json();
+  })
+  .then(function(data) {
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    var block = data.content && data.content.find(function(b){ return b.type === 'text'; });
+    if (!block) throw new Error('No text in response');
+    return block.text;
+  });
+}
+
+// ── EXTRACTION (AI) ───────────────────────────────────────
+function tryRunExtract() {
+  var rawTxt = document.getElementById('ip-raw').value.trim();
+  if (!files.length && !rawTxt) {
+    // Show inline warning on Step 2, don't navigate away
+    var existing = document.getElementById('upload-warning');
+    if (!existing) {
+      var warn = document.createElement('div');
+      warn.id = 'upload-warning';
+      warn.className = 'callout amber';
+      warn.style.marginTop = '10px';
+      warn.innerHTML = '<i class="ti ti-alert-triangle" style="flex-shrink:0"></i><div><strong>Nothing to analyse yet.</strong> Please upload at least one file or paste some raw text above before running the analysis.</div>';
+      document.querySelector('#pg-step2 .navrow').insertAdjacentElement('beforebegin', warn);
+      setTimeout(function(){ if(warn.parentNode) warn.remove(); }, 4000);
+    }
+    return; // Stay on Step 2 — do NOT navigate
+  }
+  // Clear any warning
+  var existing = document.getElementById('upload-warning');
+  if (existing) existing.remove();
+  // All good — proceed
+  goStep(3);
+  runExtract();
+}
+
+function runExtract() {
+  var lbox=document.getElementById('lbox'), rbox=document.getElementById('rbox'), bsme=document.getElementById('btn-sme');
+  lbox.style.display='flex'; rbox.style.display='none';
+  var es=document.getElementById('empty-state'); if(es) es.style.display='none';
+  bsme.setAttribute('data-disabled',''); bsme.style.opacity='.4'; bsme.style.pointerEvents='none';
+  extractDone=false;
+  var sol=document.getElementById('ip-sol').value;
+  var project=document.getElementById('ip-proj').value.trim()||'this project';
+  var client=document.getElementById('ip-client').value.trim()||'the client';
+  var rawTxt=document.getElementById('ip-raw').value.trim();
+  var tplFields=(sol&&tpls[sol])?tpls[sol]:['Project scope','Team size','Timeline','Budget','Key requirements','Integration points','Risks','Assumptions','Success criteria'];
+  var msgs=['Parsing documents…','Mapping to standard template…','Identifying gaps…','Generating analysis…','Cross-checking fields…'];
+  var mi=0;
+  var timer=setInterval(function(){ mi=(mi+1)%msgs.length; var el=document.getElementById('lmsg'); if(el) el.textContent=msgs[mi]; },1800);
+  var filePromises=files.map(function(f){ return f.text().then(function(txt){ return '\n\n--- '+f.name+' ---\n'+txt.slice(0,3000); }).catch(function(){ return ''; }); });
+  Promise.all(filePromises).then(function(contents){
+    var combined=rawTxt+contents.join('');
+    var prompt='You are a pre-sales solution architect analysing raw input files for project "'+project+'" for client "'+client+'" using solution type: "'+(sol||'general')+'".\n\n'+
+      (combined.trim()?'Raw content:\n\n'+combined.trim().slice(0,8000):'No raw files provided — use the standard template fields only.')+
+      '\n\nStandard template fields: '+tplFields.join(', ')+
+      '\n\nExtract values for each field. Mark status as "extracted" if found clearly, "assumed" if inferred, "missing" if not found. Add any extra relevant fields from the raw content.'+
+      '\n\nAlso identify 2-3 key risks from this project context.'+
+      '\n\nRespond ONLY with valid JSON:\n{"summary":"2-3 sentence analysis","fields":[{"field":"name","status":"extracted|assumed|missing","value":"value or empty string"}],"risks":[{"title":"risk title","level":"high|medium|low","description":"brief description"}]}';
+    callClaude(prompt, 2000)
+    .then(function(txt){
+      clearInterval(timer);
+      var parsed; try{parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());}catch(e){parsed={summary:'Analysis complete. Review the fields below.',fields:tplFields.map(function(f){return{field:f,status:'missing',value:''};})};} 
+      showResults(parsed,tplFields);
+      if(parsed.risks&&parsed.risks.length) { STATE.risks=parsed.risks; }
+    })
+    .catch(function(err){
+      clearInterval(timer);
+      if(err&&err.message==='NO_KEY'){
+        showResults({summary:'API key not configured. Open this file in a text editor, find the line  var API_KEY = \'\'  and paste your key there.',fields:tplFields.map(function(f){return{field:f,status:'missing',value:''};})},tplFields);
+      } else {
+        showResults({summary:'Processing error: '+(err&&err.message||'unknown')+'. Standard template fields loaded.',fields:tplFields.map(function(f){return{field:f,status:'missing',value:''};})},tplFields);
+      }
+    });
+  });
+}
+
+function showResults(parsed, tplFields) {
+  document.getElementById('ai-sum').textContent=parsed.summary||'';
+  document.getElementById('gap-body').innerHTML='';
+  var fields=parsed.fields||tplFields.map(function(f){return{field:f,status:'missing',value:''};});
+  fields.forEach(function(f){ addGapRow(f.field||'',f.status||'missing',f.value||''); });
+  var sf=fields.find(function(f){return f.field&&f.field.toLowerCase().includes('scope')&&f.value;});
+  if(sf) document.getElementById('ip-scope').value=sf.value;
+  document.getElementById('lbox').style.display='none';
+  document.getElementById('rbox').style.display='block';
+  var bsme=document.getElementById('btn-sme');
+  bsme.removeAttribute('data-disabled'); bsme.style.opacity='1'; bsme.style.pointerEvents='auto';
+  extractDone=true;
+  notify('Extraction complete — '+fields.length+' fields processed');
+}
+
+// ── GET VALUES ────────────────────────────────────────────
+function getVals() {
+  var gapRows=[];
+  document.querySelectorAll('#gap-body tr').forEach(function(tr){
+    var tds=tr.querySelectorAll('td');
+    var field=tds[0]&&tds[0].querySelector('input')?tds[0].querySelector('input').value.trim():'';
+    var status=tds[1]&&tds[1].querySelector('select')?tds[1].querySelector('select').value:'';
+    var value=tds[2]&&tds[2].querySelector('textarea')?tds[2].querySelector('textarea').value.trim():'';
+    if(field) gapRows.push({field:field,status:status,value:value});
+  });
+  var smeRows=[];
+  document.querySelectorAll('#sme-body tr').forEach(function(tr){
+    var tds=tr.querySelectorAll('td'); var name=tds[0]&&tds[0].querySelector('input')?tds[0].querySelector('input').value.trim():'';
+    var domain=tds[1]&&tds[1].querySelector('input')?tds[1].querySelector('input').value.trim():'';
+    var assum=tds[2]&&tds[2].querySelector('textarea')?tds[2].querySelector('textarea').value.trim():'';
+    var status=tds[3]&&tds[3].querySelector('select')?tds[3].querySelector('select').value:'pending';
+    if(name||domain) smeRows.push({name:name,domain:domain,assumptions:assum,status:status});
+  });
+  var phases=[];
+  document.querySelectorAll('#ph-row .pp.on .ppl').forEach(function(el){phases.push(el.textContent);});
+  var domains=[];
+  document.querySelectorAll('#dom-list div').forEach(function(d){
+    var inp=d.querySelector('input'); var dot=d.querySelector('div');
+    if(inp&&inp.value.trim()) domains.push({name:inp.value.trim(),color:dot?dot.style.background:''});
+  });
+  return {
+    project:document.getElementById('ip-proj').value.trim()||'Unnamed project',
+    client:document.getElementById('ip-client').value.trim()||'Unknown client',
+    owner:document.getElementById('ip-owner').value.trim()||'',
+    sol:document.getElementById('ip-sol').value,
+    phase:document.getElementById('ip-phase').value,
+    isMulti:document.getElementById('ip-pipe').value==='multi',
+    domains:domains,
+    filesCount:files.length,
+    gapRows:gapRows,
+    smeRows:smeRows,
+    phases:phases,
+    team:parseInt(document.getElementById('ip-team').value)||5,
+    weeks:parseInt(document.getElementById('ip-weeks').value)||12,
+    rate:parseInt(document.getElementById('ip-rate').value)||8,
+    prod:parseInt(document.getElementById('ip-prod').value)||80,
+    daily:parseInt(document.getElementById('ip-rate2').value)||1200,
+    cont:parseInt(document.getElementById('ip-cont').value)||15,
+    scope:document.getElementById('ip-scope').value.trim(),
+    close:(document.getElementById('ip-close')?document.getElementById('ip-close').value.trim():''),
+    context:(document.getElementById('ip-context')?document.getElementById('ip-context').value.trim():'')
+  };
+}
+
+// ── PIPELINE VIEW BUILDER ─────────────────────────────────
+function buildPipeline() {
+  try {
+  var v=getVals();
+  var hrs=Math.round(v.team*v.weeks*5*v.rate*(v.prod/100));
+  var days=Math.round(hrs/v.rate);
+  var base=days*v.daily;
+  var total=Math.round(base*(1+v.cont/100));
+  var extracted=v.gapRows.filter(function(r){return r.status==='extracted';}).length;
+  var missing=v.gapRows.filter(function(r){return r.status==='missing';}).length;
+  var assumed=v.gapRows.filter(function(r){return r.status==='assumed';}).length;
+  var approved=v.smeRows.filter(function(r){return r.status==='approved';}).length;
+  STATE.pipelineBuilt=true;
+
+  // Summary bar
+  document.getElementById('sumbar').innerHTML =
+    ['<i class="ti ti-user"></i> <strong>'+esc(v.project)+'</strong>',
+     '<i class="ti ti-building"></i> '+esc(v.client),
+     '<i class="ti ti-users"></i> Team: <strong>'+v.team+'</strong>',
+     '<i class="ti ti-calendar"></i> <strong>'+v.weeks+'</strong> weeks',
+     '<i class="ti ti-clock"></i> <strong>~'+hrs.toLocaleString()+'</strong> hrs',
+     '<i class="ti ti-currency-dollar"></i> <strong>$'+(total/1000).toFixed(0)+'k</strong> (w/ contingency)',
+     '<i class="ti ti-files"></i> <strong>'+v.filesCount+'</strong> file(s)',
+    ].map(function(s){return '<div class="sc">'+s+'</div>';}).join('');
+
+  // S1 row — note: items is an array, not pipe-separated
+  function pnEl(cls,title,items){
+    var arr = Array.isArray(items) ? items : String(items).split('|');
+    return '<div class="pn pn-'+cls+'"><div class="pnt">'+title+'</div><ul>'+arr.map(function(i){return i.trim()?'<li>'+esc(i.trim())+'</li>':'';}).join('')+'</ul></div>';
+  }
+  function arrEl(){ return '<div class="arr"><i class="ti ti-arrow-right" style="font-size:12px"></i></div>'; }
+  document.getElementById('s1row').innerHTML=
+    pnEl('b','Client docs',['SOW / emails / notes','Files: '+v.filesCount, v.sol||'General'])+arrEl()+
+    pnEl('g','Normalisation',['Template mapping','Gap detection','Auto-extract'])+arrEl()+
+    '<div class="pn pn-a"><div class="pnbadge pb-sme">SME gate</div><div class="pnt">Review</div><ul><li>'+missing+' missing</li><li>'+assumed+' assumed</li><li>'+approved+'/'+v.smeRows.length+' approved</li></ul></div>'+arrEl()+
+    '<div class="pn pn-p"><div class="pnbadge pb-ai">Auto</div><div class="pnt">Discovery Q</div><ul><li>'+extracted+' extracted</li><li>Traceable</li><li>Structured JSON</li></ul></div>'+arrEl()+
+    pnEl('x','Pre-sales plugin',['Structured JSON','Standard baseline','Reused in step 2']);
+
+  // Gap chips
+  if(v.gapRows.length){
+    document.getElementById('gout').style.display='flex';
+    document.getElementById('gchips').innerHTML='<strong style="margin-right:6px">Field status:</strong>'+v.gapRows.map(function(r){
+      var cls=r.status==='extracted'?'badge-extracted':r.status==='confirmed'?'badge-confirmed':r.status==='assumed'?'badge-assumed':'badge-missing';
+      var sym=r.status==='extracted'?'⚡':r.status==='confirmed'?'✓':r.status==='assumed'?'~':'✗';
+      return '<span class="badge '+cls+'">'+sym+' '+esc(r.field)+'</span>';
+    }).join(' ');
+  }
+  if(v.smeRows.length){
+    document.getElementById('sout').style.display='flex';
+    document.getElementById('schips').innerHTML='<strong style="margin-right:6px">SME status:</strong>'+v.smeRows.map(function(r){
+      return '<span class="badge badge-'+(r.status==='approved'?'confirmed':r.status==='review'?'extracted':'assumed')+'">'+esc(r.name||'SME')+(r.domain?' ('+esc(r.domain)+')':'')+'</span>';
+    }).join(' ');
+  }
+
+  // S2 row
+  var scoItems=v.scope?splitTxt(v.scope,4):['Scope of work','Quantities & efforts','Pricing','Assumptions'];
+  document.getElementById('s2row').innerHTML=
+    pnEl('p','Structured JSON',['Normalised','SME-validated'])+
+    '<div class="plus">+</div>'+
+    '<div class="pn pn-a" style="flex:.75"><div class="pnt">SME assumptions</div><ul><li>Gap-filled</li><li>'+approved+'/'+v.smeRows.length+' approved</li></ul></div>'+
+    arrEl()+
+    pnEl('b','Estimator inputs',['Team: '+v.team+' people',v.weeks+' weeks',v.rate+'h/day · '+v.prod+'%'])+
+    arrEl()+
+    '<div class="pn pn-o"><div class="pnt">SAE</div><div class="pns">Scope / Quote / Estimate</div><ul>'+scoItems.map(function(i){return'<li>'+esc(i)+'</li>';}).join('')+'<li>~'+hrs.toLocaleString()+' hrs</li></ul></div>'+
+    arrEl()+
+    '<div class="pn pn-t"><div class="pnt">Proposal</div><ul><li>'+esc(v.project)+'</li><li>Executive summary</li><li>'+v.weeks+'w schedule</li><li>$'+(total/1000).toFixed(0)+'k investment</li></ul></div>';
+
+  // Multi rows
+  if(v.isMulti&&v.domains.length){
+    document.getElementById('mrows').innerHTML=v.domains.map(function(d){
+      return '<div class="drow">'+
+        '<div class="dtag" style="background:'+d.color+'22;color:'+d.color+';border:1px solid '+d.color+'44">'+esc(d.name)+'</div>'+
+        '<div class="mpill"><div class="mdot" style="background:var(--blu)"></div>Raw files</div><div class="marr">›</div>'+
+        '<div class="mpill"><div class="mdot" style="background:var(--grn)"></div>Normalise</div><div class="marr">›</div>'+
+        '<div class="mpill" style="border-color:#4a3000"><div class="mdot" style="background:var(--amb)"></div>SME review</div><div class="marr">›</div>'+
+        '<div class="mpill"><div class="mdot" style="background:var(--acc)"></div>JSON</div><div class="marr">›</div>'+
+        '<div class="mpill"><div class="mdot" style="background:var(--amb)"></div>SAE</div>'+
+        '</div>';
+    }).join('');
+    document.getElementById('sitems').innerHTML='<li>Unified scope ('+v.domains.length+' domains)</li><li>~'+hrs.toLocaleString()+' hrs roll-up</li><li>Merged pricing</li><li>Cross-domain deps</li>';
+    document.getElementById('tb-multi').style.display='flex';
+  }
+
+  // DDPBO
+  var pset={}; v.phases.forEach(function(p){pset[p.toLowerCase()]=true;});
+  var dphases=[
+    {key:'discover',lbl:'Pre-sales',icon:'ti-search',   title:'Discover',sub:'Extraction → SME → SAE → proposal',cls:'dc1'},
+    {key:'define',  lbl:'Phase 1', icon:'ti-clipboard-list',title:'Define',  sub:'Requirements, scope baseline',cls:'dc2'},
+    {key:'design',  lbl:'Phase 2', icon:'ti-pencil-minus',  title:'Design',  sub:'Architecture, blueprints, specs',cls:'dc3'},
+    {key:'plan',    lbl:'Phase 3', icon:'ti-calendar-event',title:'Plan',    sub:'Project plan, resource allocation',cls:'dc4'},
+    {key:'build',   lbl:'Phase 4', icon:'ti-hammer',        title:'Build',   sub:'Development, config, testing',cls:'dc5'},
+    {key:'operate', lbl:'Phase 5', icon:'ti-activity',      title:'Operate', sub:'Go-live, support, handover',cls:'dc6'},
+  ];
+  document.getElementById('dgrid').innerHTML=dphases.map(function(p){
+    var isOn=pset[p.title.toLowerCase()]||pset[p.key];
+    return '<div class="dc '+p.cls+(isOn?' on':'')+'">'+
+      '<div class="dclbl">'+p.lbl+'</div>'+
+      '<div class="dcicon"><i class="ti '+p.icon+'"></i></div>'+
+      '<div class="dctitle">'+p.title+'</div>'+
+      '<div class="dcsub">'+p.sub+'</div>'+
+      (isOn?'<div class="dcon">Active</div>':'')+
+      '</div>';
+  }).join('');
+
+  // Estimate breakdown tab
+  document.getElementById('est-detail').innerHTML=
+    '<div class="g3" style="margin-bottom:16px">'+
+    '<div class="panel" style="padding:12px;margin:0"><div style="font-size:9px;color:var(--txt3);text-transform:uppercase;margin-bottom:6px">Total hours</div><div style="font-size:28px;font-weight:200;color:var(--acc)">'+hrs.toLocaleString()+'</div><div style="font-size:10px;color:var(--txt2)">'+v.team+' people × '+v.weeks+' weeks × 5 days × '+v.rate+'h × '+v.prod+'%</div></div>'+
+    '<div class="panel" style="padding:12px;margin:0"><div style="font-size:9px;color:var(--txt3);text-transform:uppercase;margin-bottom:6px">Base investment</div><div style="font-size:28px;font-weight:200;color:var(--amb)">$'+(base/1000).toFixed(0)+'k</div><div style="font-size:10px;color:var(--txt2)">$'+v.daily.toLocaleString()+'/day blended rate</div></div>'+
+    '<div class="panel" style="padding:12px;margin:0"><div style="font-size:9px;color:var(--txt3);text-transform:uppercase;margin-bottom:6px">Total (w/ '+v.cont+'% contingency)</div><div style="font-size:28px;font-weight:200;color:var(--grn)">$'+(total/1000).toFixed(0)+'k</div><div style="font-size:10px;color:var(--txt2)">Recommended to present to client</div></div>'+
+    '</div>';
+
+  // Takeaway
+  document.getElementById('takeaway').innerHTML=
+    '<strong>Pipeline for '+esc(v.project)+' ('+esc(v.client)+'):</strong> System read <strong>'+v.filesCount+' raw file(s)</strong> and extracted <strong>'+extracted+' fields automatically</strong>. SMEs fill only <strong>'+missing+' missing fields</strong> ('+assumed+' assumed). <strong>'+approved+'/'+v.smeRows.length+' SMEs approved</strong>. Estimated effort: <strong>~'+hrs.toLocaleString()+' hours</strong> across <strong>'+v.team+' people</strong> over <strong>'+v.weeks+' weeks</strong>. Investment: <strong>$'+(total/1000).toFixed(0)+'k</strong>. Feeds into: <strong>'+(v.phases.join(' → ')||'DDPBO phases not selected')+'</strong>.';
+
+  // Navigate FIRST, then set tabs (so elements are visible/in DOM)
+  navTo('step6');
+  STATE.step = 6;
+  buildWt(v, hrs, extracted, missing, assumed, approved, total);
+  // Small delay so the page is rendered before showTab manipulates display
+  setTimeout(function(){ showTab('single'); }, 30);
+  updateDash();
+  notify('Pipeline view generated!');
+
+  // Auto-add to deals tracker
+  if(v.project && v.client) {
+    var exists = STATE.deals.find(function(d){return d.name===v.project;});
+    if(!exists) {
+      STATE.deals.push({name:v.project, client:v.client, stage:'proposal', value: Math.round(total/1000), owner:v.owner, due:document.getElementById('ip-close').value, prob:60});
+      renderDeals();
+      document.getElementById('deal-badge').textContent = STATE.deals.length;
+    }
+  }
+
+  } catch(err) {
+    notify('Pipeline error: ' + (err && err.message ? err.message : String(err)), 'err');
+    console.error('buildPipeline error:', err);
+  }
+}
+
+// ── TABS ──────────────────────────────────────────────────
+function showTab(t) {
+  ['single','multi','ddpbo','walk','est'].forEach(function(x){
+    var btn=document.getElementById('tb-'+x), con=document.getElementById('tc-'+x);
+    if(btn) btn.className='pt'+(x===t?' on':'');
+    if(con) con.style.display=(x===t)?'block':'none';
+  });
+  if(t==='walk') renderWt();
+}
+
+// ── WALKTHROUGH ───────────────────────────────────────────
+function buildWt(v, hrs, extracted, missing, assumed, approved, total) {
+  var solEl=document.getElementById('ip-sol');
+  var solLbl=solEl.options[solEl.selectedIndex]?solEl.options[solEl.selectedIndex].text:'standard';
+  wtList=[
+    {lbl:'Raw files',  icon:'ti-files',     color:var_('--blu'),title:'Step 1A — collect raw inputs',body:'<strong>'+v.filesCount+' raw file(s)</strong> uploaded from <strong>'+esc(v.client)+'</strong>. Files are read and processed automatically. No pre-defined form needed.'},
+    {lbl:'Extract',    icon:'ti-sparkles',  color:var_('--grn'),title:'Step 1B — Normalisation',body:'Raw files mapped to the <strong>'+esc(solLbl)+'</strong> standard template. <strong>'+extracted+' fields extracted</strong> automatically. <strong>'+missing+' fields missing</strong> — flagged for SME review.'},
+    {lbl:'SME gate',   icon:'ti-user-check',color:var_('--amb'),title:'Step 1C — SME review gate',body:'SMEs fill only the <strong>'+missing+' missing fields</strong>. <strong>'+assumed+' fields assumed</strong> with documented rationale. <strong>'+approved+'/'+v.smeRows.length+' SMEs approved</strong>.'},
+    {lbl:'Discovery Q',icon:'ti-help-circle',color:var_('--acc'),title:'Step 1D — discovery questionnaire',body:'Combines auto-extracted fields + SME-approved assumptions. Every field has a clear source: extracted (⚡), confirmed (✓), assumed (~), or missing (✗). Full traceability.'},
+    {lbl:'Plugin',     icon:'ti-plug',      color:'#aaa',        title:'Step 1E — pre-sales plugin',body:'Outputs structured JSON for <strong>'+esc(v.project)+'</strong>. Standard <strong>'+esc(solLbl)+'</strong> inputs are auto-populated; non-standard items carry explicit SME assumption flags.'},
+    {lbl:'SAE',        icon:'ti-chart-bar', color:var_('--amb'),title:'Step 2A — SAE generation',body:'Estimated: <strong>~'+hrs.toLocaleString()+' hours</strong> | Team: '+v.team+' | '+v.weeks+' weeks | '+v.rate+' hrs/day | '+v.prod+'% productivity. Investment: <strong>$'+(total/1000).toFixed(0)+'k</strong> with contingency.'+(v.scope?'<br><br>Scope: '+esc(v.scope):'')},
+    {lbl:'DDPBO',      icon:'ti-repeat',    color:'#3acf9e',     title:'Step 2B — proposal & DDPBO handover',body:'Final proposal delivered to <strong>'+esc(v.client)+'</strong>. Feeds into DDPBO phases: <strong>'+(v.phases.join(' → ')||'not selected')+'</strong>. The normalised template becomes the scope baseline handed to the delivery team.'},
+  ];
+  wtCur=0;
+}
+function var_(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function renderWt() {
+  if(!wtList.length) return;
+  document.getElementById('wtsteps').innerHTML=wtList.map(function(s,i){
+    return '<button class="wt-tab'+(i===wtCur?' on':i<wtCur?' dn':'')+'" onclick="wtGo('+i+')">'+s.lbl+'</button>';
+  }).join('');
+  document.getElementById('wtdots').innerHTML=wtList.map(function(_,i){return '<div class="wt-dot'+(i===wtCur?' on':'')+'"></div>';}).join('');
+  document.getElementById('wtctr').textContent=(wtCur+1)+' of '+wtList.length;
+  document.getElementById('wtnext').innerHTML=wtCur===wtList.length-1?'Restart <i class="ti ti-refresh"></i>':'Next <i class="ti ti-arrow-right"></i>';
+  var s=wtList[wtCur];
+  document.getElementById('wtcontent').innerHTML='<div class="wt-card"><div class="wt-ctitle"><i class="ti '+s.icon+'" style="font-size:14px;color:'+s.color+'"></i>'+s.title+'</div><div class="wt-body">'+s.body+'</div></div>';
+}
+function wtNav(d){ wtCur=(wtCur+d+wtList.length)%wtList.length; renderWt(); }
+function wtGo(i){ wtCur=i; renderWt(); }
+
+// ── DEAL TRACKER ──────────────────────────────────────────
+var STAGES = ['lead','proposal','negotiation','won','lost'];
+var STAGE_LABELS = {lead:'Lead',proposal:'Proposal',negotiation:'Negotiation',won:'Won',lost:'Lost'};
+var STAGE_CLASSES = {lead:'ds-lead',proposal:'ds-prop',negotiation:'ds-nego',won:'ds-won',lost:'ds-lost'};
+
+function addDeal() {
+  STATE.deals.push({name:'New deal',client:'',stage:'lead',value:0,owner:'',due:'',prob:50});
+  renderDeals();
+  document.getElementById('deal-badge').textContent = STATE.deals.length;
+}
+function removeDeal(i) { STATE.deals.splice(i,1); renderDeals(); updateDash(); }
+
+function renderDeals() {
+  var tb = document.getElementById('deals-body');
+  tb.innerHTML = '';
+  STATE.deals.forEach(function(d, i) {
+    var tr = document.createElement('tr');
+    var stageOpts = STAGES.map(function(s){ return '<option value="'+s+'"'+(s===d.stage?' selected':'')+'>'+STAGE_LABELS[s]+'</option>'; }).join('');
+    tr.innerHTML =
+      '<td><input type="text" value="'+esc(d.name)+'" onchange="STATE.deals['+i+'].name=this.value;updateDash()" style="font-weight:500"></td>'+
+      '<td><select onchange="STATE.deals['+i+'].stage=this.value;renderDeals();updateDash()">'+stageOpts+'</select></td>'+
+      '<td><input type="text" value="'+esc(d.value)+'" onchange="STATE.deals['+i+'].value=parseFloat(this.value)||0;updateDash()" style="width:80px"></td>'+
+      '<td><input type="text" value="'+esc(d.owner)+'" onchange="STATE.deals['+i+'].owner=this.value"></td>'+
+      '<td><input type="text" value="'+esc(d.due)+'" placeholder="YYYY-MM-DD" onchange="STATE.deals['+i+'].due=this.value" style="width:110px"></td>'+
+      '<td><div class="rrow" style="gap:6px"><input type="range" min="0" max="100" value="'+d.prob+'" oninput="STATE.deals['+i+'].prob=parseInt(this.value);this.nextElementSibling.textContent=this.value+\'%\'"><span style="font-size:11px;color:var(--acc);min-width:34px">'+d.prob+'%</span></div></td>'+
+      '<td><button class="rmbtn" onclick="removeDeal('+i+')"><i class="ti ti-x"></i></button></td>';
+    tb.appendChild(tr);
+  });
+  // Funnel
+  var funnel = document.getElementById('funnel-wrap');
+  var counts = {lead:0,proposal:0,negotiation:0,won:0,lost:0};
+  STATE.deals.forEach(function(d){ counts[d.stage]=(counts[d.stage]||0)+1; });
+  var max = Math.max.apply(null,Object.values(counts).concat([1]));
+  funnel.innerHTML = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+
+    STAGES.filter(function(s){ return s!=='won'&&s!=='lost'; }).map(function(s){
+      var pct = (counts[s]/max)*100;
+      return '<div style="flex:1;min-width:80px"><div class="funnel-label"><span>'+STAGE_LABELS[s]+'</span><strong>'+counts[s]+'</strong></div><div class="funnel-track"><div class="funnel-fill" style="width:'+pct+'%;background:'+(s==='lead'?'var(--blu)':s==='proposal'?'var(--acc)':'var(--amb)')+'"></div></div></div>';
+    }).join('')+
+    '</div>';
+  updateWinLoss();
+  document.getElementById('deal-badge').textContent = STATE.deals.filter(function(d){ return d.stage!=='won'&&d.stage!=='lost'; }).length;
+}
+
+function updateWinLoss() {
+  var won = STATE.deals.filter(function(d){return d.stage==='won';}).length;
+  var lost = STATE.deals.filter(function(d){return d.stage==='lost';}).length;
+  document.getElementById('wl-won').textContent = won;
+  document.getElementById('wl-lost').textContent = lost;
+  var total = won + lost;
+  var rate = total ? Math.round(won/total*100) : 0;
+  document.getElementById('win-rate-bar').style.width = rate + '%';
+  document.getElementById('win-rate-pct').textContent = rate + '%';
+  var closed = STATE.deals.filter(function(d){ return d.stage==='won'||d.stage==='lost'; });
+  var el = document.getElementById('wl-deal-list');
+  if (!closed.length) { el.innerHTML='<div class="callout"><i class="ti ti-info-circle"></i> Mark deals as Won or Lost in the Deal Tracker to see analysis here.</div>'; return; }
+  el.innerHTML = closed.map(function(d){
+    return '<div class="deal-row"><div class="deal-name">'+esc(d.name)+'</div><div class="deal-meta">'+esc(d.client)+' — $'+esc(d.value)+'k</div><div class="deal-stage '+(d.stage==='won'?'ds-won':'ds-lost')+'">'+STAGE_LABELS[d.stage]+'</div></div>';
+  }).join('');
+}
+
+// ── RISK MATRIX ───────────────────────────────────────────
+function renderRisks() {
+  var el = document.getElementById('risk-list');
+  if (!STATE.risks.length) {
+    el.innerHTML = '<div class="callout"><i class="ti ti-info-circle"></i> No risks identified yet. Click “Auto-generate risks” to detect from your project setup, or add manually.</div>';
+    return;
+  }
+  el.innerHTML = STATE.risks.map(function(r,i){
+    var cls = r.level==='high'?'risk-h':r.level==='low'?'risk-l':'risk-m';
+    var icon = r.level==='high'?'ti-alert-octagon':r.level==='low'?'ti-shield-check':'ti-alert-triangle';
+    return '<div class="risk-item"><div class="risk-icon '+cls+'"><i class="ti '+icon+'"></i></div>'+
+      '<div class="risk-body"><div class="risk-title">'+esc(r.title)+'</div><div class="risk-desc">'+esc(r.description)+'</div></div>'+
+      '<button class="rmbtn" onclick="STATE.risks.splice('+i+',1);renderRisks()"><i class="ti ti-x"></i></button></div>';
+  }).join('');
+}
+
+function addRiskManual() {
+  STATE.risks.push({title:'New risk',level:'medium',description:'Describe the risk and mitigation…'});
+  renderRisks();
+}
+
+function generateRisks() {
+  var v = getVals();
+  var prompt = 'You are a presales risk analyst for the project "'+v.project+'" for client "'+v.client+'" using '+v.sol+' solution.\n\nContext:\n- Team: '+v.team+' people, '+v.weeks+' weeks\n- Scope: '+v.scope+'\n- Missing fields: '+v.gapRows.filter(function(r){return r.status==='missing';}).length+'\n\nIdentify 5 key presales risks. For each: title, level (high/medium/low), and a 1-sentence description and suggested mitigation.\n\nRespond ONLY with JSON: {"risks":[{"title":"...","level":"high|medium|low","description":"..."}]}';
+  notify('Generating risks…');
+  callClaude(prompt, 800)
+  .then(function(txt){
+    var parsed; try{parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());}catch(e){parsed={risks:[]};}
+    STATE.risks = (parsed.risks||[]);
+    renderRisks();
+    notify('Risk matrix generated — '+STATE.risks.length+' risks identified');
+  })
+  .catch(function(err){
+    if(err&&err.message==='NO_KEY'){ notify('API key not set — open the HTML file in a text editor and add your key','err'); }
+    else { notify('Error: '+(err&&err.message||'unknown'),'err'); }
+  });
+}
+
+// ── AI ADVISOR ────────────────────────────────────────────
+function sendAdvisorMsg() {
+  var inp = document.getElementById('ai-chat-inp');
+  var msg = inp.value.trim();
+  if (!msg) return;
+  inp.value = '';
+  var v = getVals();
+  appendChat('user', msg);
+  appendChat('ai', '<span style="color:var(--txt3)"><i class="ti ti-dots"></i> Processing…</span>');
+  var context = 'Project: '+v.project+'\nClient: '+v.client+'\nSolution: '+(v.sol||'general')+'\nTeam: '+v.team+'\nWeeks: '+v.weeks+'\nFiles: '+v.filesCount+'\nMissing fields: '+v.gapRows.filter(function(r){return r.status==='missing';}).length+'\nDeals in pipeline: '+STATE.deals.length+'\nRisks: '+STATE.risks.length;
+  var full = 'You are a seasoned presales solution architect and advisor. Context about the current deal:\n\n'+context+'\n\nUser question: '+msg+'\n\nGive a sharp, practical answer in 2-4 sentences. Be specific and actionable.';
+  callClaude(full, 500)
+  .then(function(txt){ updateLastAiMsg(txt); })
+  .catch(function(err){
+    if(err&&err.message==='NO_KEY'){
+      updateLastAiMsg('API key not configured. Open the HTML file in a text editor, find  var API_KEY = \'\'  and paste your key there, then reload.');
+    } else {
+      updateLastAiMsg('Connection error: '+(err&&err.message||'unknown')+'. Please try again.');
+    }
+  });
+}
+
+function appendChat(role, html) {
+  var wrap = document.getElementById('ai-chat-msgs');
+  var div = document.createElement('div');
+  div.className = 'ai-msg ' + role;
+  div.innerHTML = '<div class="ai-avatar '+(role==='ai'?'ai-av':'user-av')+'">'+(role==='ai'?'<i class="ti ti-sparkles" style="font-size:11px"></i>':'U')+'</div><div class="ai-msg-bubble">'+html+'</div>';
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+function updateLastAiMsg(txt) {
+  var msgs = document.querySelectorAll('#ai-chat-msgs .ai-msg.ai');
+  if (msgs.length) msgs[msgs.length-1].querySelector('.ai-msg-bubble').innerHTML = esc(txt).replace(/\n/g,'<br>');
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────
+function updateDash() {
+  var active = STATE.deals.filter(function(d){return d.stage!=='won'&&d.stage!=='lost';}).length;
+  document.getElementById('kpi-deals').textContent = active;
+  document.getElementById('kpi-team').textContent = document.getElementById('ip-team') ? (document.getElementById('ip-team').value||'—') : '—';
+  if (STATE.pipelineBuilt) {
+    var hrs = Math.round((parseInt(document.getElementById('ip-team').value)||5) * (parseInt(document.getElementById('ip-weeks').value)||12) * 5 * (parseInt(document.getElementById('ip-rate').value)||8) * ((parseInt(document.getElementById('ip-prod').value)||80)/100));
+    document.getElementById('kpi-hrs').textContent = hrs.toLocaleString();
+    var missing = document.querySelectorAll('#gap-body select option[value="missing"]:checked').length;
+    document.getElementById('kpi-gaps').textContent = document.querySelectorAll('#gap-body tr').length > 0 ? document.querySelectorAll('#gap-body select').length - Array.from(document.querySelectorAll('#gap-body select')).filter(function(s){return s.value!=='missing';}).length : '—';
+  }
+  // Health panel
+  var proj = document.getElementById('ip-proj') ? document.getElementById('ip-proj').value.trim() : '';
+  if (proj && STATE.pipelineBuilt) {
+    document.getElementById('dash-health').innerHTML =
+      '<div class="callout green"><i class="ti ti-check"></i><strong>Pipeline generated for '+esc(proj)+'</strong> — view the full pipeline in Step 6 or use the Pipeline Advisor for deal strategy.</div>'+
+      '<div style="margin-top:10px"><div style="font-size:9px;color:var(--txt3);text-transform:uppercase;margin-bottom:5px">Pipeline progress</div>'+
+      '<div class="prog-wrap"><div class="prog-bar" style="width:83%"></div></div>'+
+      '<div style="font-size:10px;color:var(--txt2);margin-top:4px">Step 5 of 6 complete — pipeline view generated</div></div>';
+  } else if (proj) {
+    document.getElementById('dash-health').innerHTML =
+      '<div class="callout amber"><i class="ti ti-clock"></i><strong>Project set up: '+esc(proj)+'</strong> — continue the pipeline to complete the extraction and estimation.</div>'+
+      '<div style="margin-top:10px"><div class="prog-wrap"><div class="prog-bar" style="width:'+(STATE.step/6*100)+'%"></div></div><div style="font-size:10px;color:var(--txt2);margin-top:4px">Step '+STATE.step+' of 6</div></div>';
+  }
+}
+
+// ── SAVE / EXPORT ─────────────────────────────────────────
+function saveState() {
+  try {
+    var snapshot = {deals:STATE.deals, risks:STATE.risks};
+    sessionStorage.setItem('gsc_pipeline_state', JSON.stringify(snapshot));
+    notify('Saved to session');
+  } catch(e) { notify('Save failed','err'); }
+}
+function exportPDF() {
+  var v = getVals();
+  if (!STATE.pipelineBuilt && !v.project) {
+    notify('Complete the pipeline first before exporting PDF','err');
+    return;
+  }
+
+  var hrs   = Math.round(v.team * v.weeks * 5 * v.rate * (v.prod/100));
+  var days  = Math.round(hrs / v.rate);
+  var base  = days * v.daily;
+  var total = Math.round(base * (1 + v.cont/100));
+  var extracted = v.gapRows.filter(function(r){return r.status==='extracted';}).length;
+  var confirmed = v.gapRows.filter(function(r){return r.status==='confirmed';}).length;
+  var missing   = v.gapRows.filter(function(r){return r.status==='missing';}).length;
+  var assumed   = v.gapRows.filter(function(r){return r.status==='assumed';}).length;
+  var approved  = v.smeRows.filter(function(r){return r.status==='approved';}).length;
+  var won       = STATE.deals.filter(function(d){return d.stage==='won';}).length;
+  var lost      = STATE.deals.filter(function(d){return d.stage==='lost';}).length;
+  var winRate   = (won+lost) ? Math.round(won/(won+lost)*100) : 0;
+  var now       = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  var solLabels = {erp:'ERP / Oracle Fusion',cloud:'Cloud Migration (OCI / AWS / Azure)',data:'Data & Analytics / EDW',custom:'Custom Application Development',security:'Cybersecurity',digital:'Digital Transformation',ai:'AI / ML Implementation',infra:'Infrastructure & DevOps',map:'Oracle MAP / Migration (v6)'};
+  var solLabel  = solLabels[v.sol] || v.sol || 'General';
+  var phaseLabels = {discover:'Discover (Pre-sales)',define:'Define',design:'Design',plan:'Plan',build:'Build',operate:'Operate'};
+
+  var STAGE_COL = {lead:'#1a5a99',proposal:'#5546cc',negotiation:'#a05000',won:'#1a7a50',lost:'#a02020'};
+  var STAGE_BG  = {lead:'#e0efff',proposal:'#ede9ff',negotiation:'#fff3e0',won:'#d4f4e8',lost:'#fde8e8'};
+  var STAGE_LBL = {lead:'Lead',proposal:'Proposal',negotiation:'Negotiation',won:'Won',lost:'Lost'};
+
+  function badge(bg,col,txt){ return '<span style="display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+bg+';color:'+col+'">'+txt+'</span>'; }
+  function section(title, content) {
+    return '<div style="padding:28px 40px;border-bottom:1px solid #eee;page-break-inside:avoid">' +
+      '<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#6b63d4;margin-bottom:18px;display:flex;align-items:center;gap:10px">' +
+      title+'<span style="flex:1;height:1px;background:#e8e8e8;display:inline-block"></span></div>'+
+      content+'</div>';
+  }
+  function th(t){ return '<th style="text-align:left;padding:8px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#888;background:#f7f7f7;border-bottom:2px solid #e0e0e0">'+t+'</th>'; }
+  function td(t,w){ return '<td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#333;vertical-align:top'+(w?';width:'+w:'')+'">'+(t||'<span style="color:#ccc">—</span>')+'</td>'; }
+
+  // ── STATUS BADGE helper
+  function statusBadge(s) {
+    if(s==='extracted') return badge('#dcf5ea','#1a7a50','⚡ Extracted');
+    if(s==='confirmed') return badge('#dcf5ea','#1a7a50','✓ Confirmed');
+    if(s==='assumed')   return badge('#fff3e0','#a05000','~ Assumed');
+    return badge('#fde8e8','#a02020','✗ Missing');
+  }
+
+  // ── COVER PAGE
+  var coverHtml =
+    '<div style="background:linear-gradient(140deg,#1a1540 0%,#0d2540 60%,#0a3020 100%);color:#fff;padding:56px 48px 48px;min-height:280px;position:relative">' +
+    '<div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.5;margin-bottom:28px">GSC Pre-sales Command Centre &nbsp;·&nbsp; Confidential</div>' +
+    '<div style="font-size:36px;font-weight:200;line-height:1.2;margin-bottom:10px;letter-spacing:-.01em">'+esc(v.project||'Pre-sales Pipeline Report')+'</div>' +
+    '<div style="font-size:15px;opacity:.7;margin-bottom:40px">Prepared for <strong style="opacity:1">'+esc(v.client||'—')+'</strong></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-top:36px">' +
+    ['<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 16px"><div style="font-size:8px;opacity:.5;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Solution</div><div style="font-size:13px;font-weight:500">'+esc(solLabel)+'</div></div>',
+     '<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 16px"><div style="font-size:8px;opacity:.5;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Deal Owner</div><div style="font-size:13px;font-weight:500">'+esc(v.owner||'—')+'</div></div>',
+     '<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 16px"><div style="font-size:8px;opacity:.5;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Close Date</div><div style="font-size:13px;font-weight:500">'+esc(v.close||v.due||'—')+'</div></div>',
+     '<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 16px"><div style="font-size:8px;opacity:.5;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Generated</div><div style="font-size:13px;font-weight:500">'+now+'</div></div>',
+    ].join('')+
+    '</div></div>';
+
+  // ── ESTIMATE CARDS
+  var estHtml =
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px">' +
+    '<div style="border:1.5px solid #e0daff;border-radius:10px;padding:20px;text-align:center">' +
+    '<div style="font-size:32px;font-weight:200;color:#6b63d4;letter-spacing:-.02em">'+hrs.toLocaleString()+'</div>' +
+    '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#999;margin:4px 0 8px">Total hours</div>' +
+    '<div style="font-size:11px;color:#aaa;line-height:1.6">'+v.team+' people<br>'+v.weeks+' weeks × 5 days<br>'+v.rate+'h/day · '+v.prod+'% productivity</div></div>' +
+    '<div style="border:1.5px solid #ffe5c0;border-radius:10px;padding:20px;text-align:center">' +
+    '<div style="font-size:32px;font-weight:200;color:#c27c10;letter-spacing:-.02em">$'+(base/1000).toFixed(0)+'k</div>' +
+    '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#999;margin:4px 0 8px">Base investment</div>' +
+    '<div style="font-size:11px;color:#aaa;line-height:1.6">$'+v.daily.toLocaleString()+'/day blended rate<br>'+days.toLocaleString()+' person-days<br>Before contingency</div></div>' +
+    '<div style="border:1.5px solid #b8f0dc;border-radius:10px;padding:20px;text-align:center">' +
+    '<div style="font-size:32px;font-weight:200;color:#1a7a50;letter-spacing:-.02em">$'+(total/1000).toFixed(0)+'k</div>' +
+    '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#999;margin:4px 0 8px">Total investment</div>' +
+    '<div style="font-size:11px;color:#aaa;line-height:1.6">Includes '+v.cont+'% contingency<br>Recommended client price<br><strong style="color:#1a7a50">$'+(Math.round(total/v.weeks/1000*10)/10)+'k per week</strong></div></div>' +
+    '</div>' +
+    (v.scope ? '<div style="background:#fffbf0;border-left:4px solid #f5a623;border-radius:0 8px 8px 0;padding:14px 18px;font-size:12px;color:#444;line-height:1.7"><strong style="color:#a06000">Scope:</strong> '+esc(v.scope)+'</div>' : '') +
+    (v.context ? '<div style="margin-top:12px;background:#f8f8ff;border-left:4px solid #6b63d4;border-radius:0 8px 8px 0;padding:14px 18px;font-size:12px;color:#444;line-height:1.7"><strong style="color:#5546cc">Context:</strong> '+esc(v.context)+'</div>' : '');
+
+  // ── PIPELINE METRICS
+  var metricsHtml =
+    '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">' +
+    [
+      {val:v.filesCount,  lbl:'Files processed', col:'#6b63d4'},
+      {val:extracted,     lbl:'Fields extracted', col:'#1a7a50'},
+      {val:assumed,       lbl:'Fields assumed',   col:'#a05000'},
+      {val:missing,       lbl:'Gaps flagged',      col:'#a02020'},
+      {val:approved+'/'+v.smeRows.length, lbl:'SMEs approved', col:'#1a5a99'},
+    ].map(function(k){
+      return '<div style="border:1px solid #e8e8e8;border-radius:10px;padding:14px 10px;text-align:center">' +
+        '<div style="font-size:26px;font-weight:200;color:'+k.col+'">'+k.val+'</div>' +
+        '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-top:5px">'+k.lbl+'</div></div>';
+    }).join('') + '</div>';
+
+  // ── DDPBO PHASES
+  var ddpboPhaseList = ['discover','define','design','plan','build','operate'];
+  var activePhases = v.phases.map(function(p){ return p.toLowerCase(); });
+  var ddpboCols = {discover:'#1a5a99',define:'#1a7a50',design:'#5546cc',plan:'#a05000',build:'#c27c10',operate:'#2a9d6f'};
+  var ddpboBgs  = {discover:'#e0efff',define:'#d4f4e8',design:'#ede9ff',plan:'#fff3e0',build:'#fff8e0',operate:'#d0f5ea'};
+  var ddpboLabels = {discover:'Discover',define:'Define',design:'Design',plan:'Plan',build:'Build',operate:'Operate'};
+  var ddpboSubs = {discover:'Pre-sales / extraction',define:'Requirements & scope',design:'Architecture & specs',plan:'Project plan & resources',build:'Development & testing',operate:'Go-live & support'};
+  var ddpboHtml = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">' +
+    ddpboPhaseList.map(function(p){
+      var on = activePhases.indexOf(p)>-1 || activePhases.indexOf(ddpboLabels[p].toLowerCase())>-1;
+      var bg = on ? ddpboBgs[p] : '#fafafa';
+      var col= on ? ddpboCols[p]: '#bbb';
+      var bdr= on ? '2px solid '+col : '1px solid #e8e8e8';
+      return '<div style="border:'+bdr+';border-radius:10px;padding:14px;background:'+bg+'">' +
+        '<div style="font-size:12px;font-weight:600;color:'+col+';margin-bottom:3px">'+ddpboLabels[p]+'</div>' +
+        '<div style="font-size:10px;color:#999">'+ddpboSubs[p]+'</div>' +
+        (on?'<div style="margin-top:6px;font-size:9px;font-weight:700;color:'+col+'">▶ ACTIVE</div>':'') +
+        '</div>';
+    }).join('')+'</div>';
+
+  // ── EXTRACTED FIELDS TABLE
+  var fieldsHtml = '';
+  if(v.gapRows.length) {
+    fieldsHtml = '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
+      '<thead><tr>'+th('Field')+th('Status')+th('Value / Assumption')+'</tr></thead><tbody>' +
+      v.gapRows.map(function(r,i){
+        var bg = i%2===0?'#fff':'#fafafa';
+        return '<tr style="background:'+bg+'">' +
+          td('<strong>'+esc(r.field)+'</strong>','22%') +
+          '<td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;width:14%">'+statusBadge(r.status)+'</td>' +
+          td(r.value||'<em style="color:#bbb">Not found</em>') + '</tr>';
+      }).join('')+
+      '</tbody></table>';
+  }
+
+  // ── SME TABLE
+  var smeHtml = '';
+  if(v.smeRows.length) {
+    smeHtml = '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
+      '<thead><tr>'+th('SME Name')+th('Domain')+th('Assumptions documented')+th('Status')+'</tr></thead><tbody>' +
+      v.smeRows.map(function(r,i){
+        var bg = i%2===0?'#fff':'#fafafa';
+        var sb = r.status==='approved'?badge('#d4f4e8','#1a7a50','✓ Approved'):r.status==='review'?badge('#fff3e0','#a05000','In Review'):badge('#e0efff','#1a5a99','Pending');
+        return '<tr style="background:'+bg+'">' +
+          td('<strong>'+esc(r.name||'—')+'</strong>') +
+          td(esc(r.domain||'—')) +
+          td(esc(r.assumptions||'—')) +
+          '<td style="padding:8px 10px;border-bottom:1px solid #f0f0f0">'+sb+'</td></tr>';
+      }).join('')+'</tbody></table>';
+  }
+
+  // ── DEALS TABLE
+  var dealsHtml = '';
+  if(STATE.deals.length) {
+    var totalPipeline = STATE.deals.filter(function(d){return d.stage!=='lost';}).reduce(function(s,d){return s+(parseFloat(d.value)||0);},0);
+    var weightedVal   = STATE.deals.reduce(function(s,d){return s+(parseFloat(d.value)||0)*(d.prob||0)/100;},0);
+    dealsHtml =
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">' +
+      '<div style="background:#f8f8ff;border:1px solid #e0daff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:300;color:#6b63d4">'+STATE.deals.length+'</div><div style="font-size:9px;color:#999;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">Total deals</div></div>' +
+      '<div style="background:#f0fff8;border:1px solid #b8f0dc;border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:300;color:#1a7a50">$'+totalPipeline.toFixed(0)+'k</div><div style="font-size:9px;color:#999;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">Pipeline value</div></div>' +
+      '<div style="background:#fffbf0;border:1px solid #ffe0a0;border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:300;color:#a05000">$'+weightedVal.toFixed(0)+'k</div><div style="font-size:9px;color:#999;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">Weighted forecast</div></div>' +
+      '</div>' +
+      '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
+      '<thead><tr>'+th('Deal / Project')+th('Client')+th('Stage')+th('Value')+th('Owner')+th('Due')+th('Probability')+'</tr></thead><tbody>' +
+      STATE.deals.map(function(d,i){
+        var bg = i%2===0?'#fff':'#fafafa';
+        var sb = badge(STAGE_BG[d.stage]||'#eee', STAGE_COL[d.stage]||'#555', STAGE_LBL[d.stage]||d.stage);
+        var barW = d.prob+'%';
+        var barCol = d.prob>=70?'#1a7a50':d.prob>=40?'#c27c10':'#a02020';
+        var probCell = '<div style="display:flex;align-items:center;gap:6px"><div style="flex:1;background:#f0f0f0;border-radius:3px;height:6px;overflow:hidden"><div style="width:'+barW+';height:100%;background:'+barCol+';border-radius:3px"></div></div><span style="font-size:10px;color:'+barCol+';font-weight:700;min-width:30px">'+d.prob+'%</span></div>';
+        return '<tr style="background:'+bg+'">' +
+          td('<strong>'+esc(d.name)+'</strong>') +
+          td(esc(d.client||'—')) +
+          '<td style="padding:8px 10px;border-bottom:1px solid #f0f0f0">'+sb+'</td>' +
+          td('<strong>$'+esc(d.value)+'k</strong>') +
+          td(esc(d.owner||'—')) +
+          td(esc(d.due||'—')) +
+          '<td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;min-width:100px">'+probCell+'</td></tr>';
+      }).join('')+'</tbody></table>';
+    if(won+lost>0) {
+      dealsHtml += '<div style="margin-top:14px;display:flex;align-items:center;gap:14px;background:#f8f8f8;border-radius:8px;padding:12px 16px">' +
+        '<span style="font-size:11px;color:#666">Win rate:</span>' +
+        '<div style="flex:1;background:#e8e8e8;border-radius:4px;height:10px;overflow:hidden"><div style="width:'+winRate+'%;height:100%;background:linear-gradient(90deg,#6b63d4,#1a7a50);border-radius:4px"></div></div>' +
+        '<strong style="font-size:14px;color:#1a7a50">'+winRate+'%</strong>' +
+        '<span style="font-size:10px;color:#aaa">('+won+' won, '+lost+' lost)</span></div>';
+    }
+  }
+
+  // ── RISKS
+  var risksHtml = '';
+  if(STATE.risks.length) {
+    var rCols = {high:'#a02020',medium:'#a05000',low:'#1a7a50'};
+    var rBgs  = {high:'#fde8e8',medium:'#fff3e0',low:'#d4f4e8'};
+    var rCount = {high:0,medium:0,low:0};
+    STATE.risks.forEach(function(r){ rCount[r.level]=(rCount[r.level]||0)+1; });
+    risksHtml =
+      '<div style="display:flex;gap:10px;margin-bottom:16px">' +
+      ['high','medium','low'].map(function(l){
+        return '<div style="flex:1;border:1px solid '+rBgs[l]+';background:'+rBgs[l]+';border-radius:8px;padding:10px;text-align:center">' +
+          '<div style="font-size:22px;font-weight:300;color:'+rCols[l]+'">'+rCount[l]+'</div>' +
+          '<div style="font-size:9px;font-weight:700;text-transform:uppercase;color:'+rCols[l]+';letter-spacing:.08em;margin-top:3px">'+l+' risk'+(rCount[l]!==1?'s':'')+'</div></div>';
+      }).join('')+'</div>' +
+      STATE.risks.map(function(r){
+        var rc=rCols[r.level]||'#555', rb=rBgs[r.level]||'#eee';
+        return '<div style="display:flex;gap:12px;padding:12px;border:1px solid #eee;border-radius:8px;margin-bottom:8px;border-left:4px solid '+rc+'">' +
+          '<div style="flex-shrink:0"><span style="display:inline-block;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:6px;background:'+rb+';color:'+rc+'">'+r.level+'</span></div>' +
+          '<div><div style="font-size:12px;font-weight:600;color:#222;margin-bottom:3px">'+esc(r.title)+'</div>' +
+          '<div style="font-size:11px;color:#666;line-height:1.6">'+esc(r.description)+'</div></div></div>';
+      }).join('');
+  }
+
+  // ── PIPELINE FLOW SUMMARY
+  var pipelineFlowHtml =
+    '<div style="display:flex;gap:0;align-items:stretch;margin-bottom:12px">' +
+    [
+      {t:'Client docs',    s:'Files: '+v.filesCount+' uploaded',      col:'#1a5a99',bg:'#e0efff'},
+      {t:'Normalisation',  s:extracted+' fields extracted',           col:'#5546cc',bg:'#ede9ff'},
+      {t:'SME review',     s:missing+' gaps · '+approved+' approved', col:'#a05000',bg:'#fff3e0'},
+      {t:'Estimation',     s:'~'+hrs.toLocaleString()+' hrs',         col:'#c27c10',bg:'#fff8e0'},
+      {t:'Proposal',       s:'$'+(total/1000).toFixed(0)+'k total',   col:'#1a7a50',bg:'#d4f4e8'},
+    ].map(function(n,i,arr){
+      return '<div style="flex:1;border:1px solid '+n.col+'44;background:'+n.bg+';border-radius:'+(i===0?'8px 0 0 8px':i===arr.length-1?'0 8px 8px 0':'0')+';padding:10px 12px;position:relative">' +
+        '<div style="font-size:10px;font-weight:700;color:'+n.col+';margin-bottom:3px">'+n.t+'</div>' +
+        '<div style="font-size:10px;color:#666">'+n.s+'</div>' +
+        (i<arr.length-1?'<div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);z-index:2;font-size:16px;color:#ccc">›</div>':'')+'</div>';
+    }).join('')+'</div>';
+
+  // ── FULL HTML DOCUMENT
+  var doc = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">'+
+    '<title>'+esc(v.project||'Pre-sales Report')+' — Pipeline Report</title>'+
+    '<style>'+
+    '*{box-sizing:border-box;margin:0;padding:0}'+
+    'body{font-family:"Helvetica Neue",Arial,sans-serif;background:#fff;color:#222;font-size:12px;line-height:1.5}'+
+    'table{border-collapse:collapse;width:100%}'+
+    '@page{size:A4;margin:0}'+
+    '@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    '.no-print{display:none!important}.page-break{page-break-after:always}}'+
+    '</style></head><body>'+
+
+    // Print button (hidden on print)
+    '<div class="no-print" style="position:fixed;top:16px;right:16px;z-index:999;display:flex;gap:8px">'+
+    '<button onclick="window.print()" style="background:#6b63d4;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">🖨 Print / Save as PDF</button>'+
+    '<button onclick="window.close()" style="background:#eee;color:#555;border:none;padding:10px 16px;border-radius:8px;font-size:13px;cursor:pointer">✕ Close</button>'+
+    '</div>'+
+
+    // COVER
+    '<div class="page-break">'+coverHtml+'</div>'+
+
+    // EXECUTIVE SUMMARY
+    section('Executive summary', pipelineFlowHtml + estHtml) +
+
+    // PIPELINE METRICS
+    section('Pipeline metrics', metricsHtml) +
+
+    // DDPBO PHASES
+    (v.phases.length ? section('DDPBO phase alignment', ddpboHtml) : '') +
+
+    // EXTRACTED FIELDS
+    (v.gapRows.length ? section('Extracted & normalised fields ('+v.gapRows.length+')', fieldsHtml) : '') +
+
+    // SME REVIEWERS
+    (v.smeRows.length ? section('SME reviewers & assumptions', smeHtml) : '') +
+
+    // DEAL TRACKER
+    (STATE.deals.length ? section('Deal tracker ('+STATE.deals.length+' deals)', dealsHtml) : '') +
+
+    // RISKS
+    (STATE.risks.length ? section('Risk matrix ('+STATE.risks.length+' identified)', risksHtml) : '') +
+
+    // FOOTER
+    '<div style="padding:20px 40px;text-align:center;border-top:1px solid #eee;font-size:9px;color:#bbb;margin-top:8px">'+
+    esc(v.project||'Pre-sales Pipeline Report')+' &nbsp;·&nbsp; Prepared for '+esc(v.client||'—')+' &nbsp;·&nbsp; Generated '+now+' &nbsp;·&nbsp; GSC Pre-sales Command Centre &nbsp;·&nbsp; Confidential'+
+    '</div>'+
+
+    '<script>window.onload=function(){if(window.opener){}}</s'+'cript>'+
+    '</body></html>';
+
+  var win = window.open('','_blank','width=900,height=800,scrollbars=yes');
+  if (!win) {
+    notify('Pop-up blocked — please allow pop-ups for this page','err');
+    return;
+  }
+  win.document.write(doc);
+  win.document.close();
+  notify('PDF report opened — click "Print / Save as PDF" in the new window');
+}
+
+function exportJSON() {
+  var v = getVals();
+  var out = {project:v, deals:STATE.deals, risks:STATE.risks, exported: new Date().toISOString()};
+  var blob = new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (v.project||'pipeline').replace(/\s+/g,'-').toLowerCase() + '-pipeline.json';
+  a.click();
+  notify('Exported JSON');
+}
+
+// ── INIT ──────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function(){
+  updateEstPreview();
+  renderDeals();
+  renderRisks();
+  updateDash();
+  navTo('dash');
+  // Restore session
+  try {
+    var saved = sessionStorage.getItem('gsc_pipeline_state');
+    if (saved) { var s=JSON.parse(saved); STATE.deals=s.deals||[]; STATE.risks=s.risks||[]; renderDeals(); renderRisks(); updateDash(); }
+  } catch(e){}
+});
+</script>
+
+<!-- PDF print container -->
+<div id="pdf-report" style="display:none"></div>
+
+</body>
+</html>
