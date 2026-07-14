@@ -622,7 +622,7 @@ select option{background:var(--bg3);}
 
 <script>
 // ── STATE ─────────────────────────────────────────────────
-var API_KEY = localStorage.getItem('gsc_access_key') || '';
+var API_KEY = localStorage.getItem('gsc_access_key') || atob('PASTE_YOUR_BASE64_HERE');
 var STATE = { domain:null, custName:'', oppName:'', prepBy:'', estDate:'', rawInput:'', normalisedData:null, estimationData:null };
 var HISTORY = JSON.parse(localStorage.getItem('cps_history') || '[]');
 
